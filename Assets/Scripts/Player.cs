@@ -34,7 +34,7 @@ public class FPSController : MonoBehaviour
     void Update()
     {
 
-        #region Handles Movment
+        
         Vector3 forward = transform.TransformDirection(Vector3.forward);
         Vector3 right = transform.TransformDirection(Vector3.right);
 
@@ -43,20 +43,10 @@ public class FPSController : MonoBehaviour
         float curSpeedX = canMove ? (isRunning ? runSpeed : walkSpeed) * Input.GetAxis("Vertical") : 0;
         float curSpeedY = canMove ? (isRunning ? runSpeed : walkSpeed) * Input.GetAxis("Horizontal") : 0;
         float movementDirectionY = moveDirection.y;
-        if(characterController.isGrounded){
-            moveDirection = (forward * curSpeedX) + (right * curSpeedY);
-        }
-        else
-        {
-            Vector3 horizontal = new Vector3(moveDirection.x, 0f, moveDirection.z);
-            horizontal = Vector3.Lerp(horizontal, Vector3.zero, airDrag * Time.deltaTime);
-            moveDirection.x = horizontal.x;
-            moveDirection.z = horizontal.z;
-        }
+        moveDirection = (forward * curSpeedX) + (right * curSpeedY);
 
-        #endregion
+        
 
-        #region Handles Jumping
         if (Input.GetKey(KeyCode.Space) && canMove && characterController.isGrounded)
         {
             moveDirection.y = jumpPower;
@@ -71,9 +61,7 @@ public class FPSController : MonoBehaviour
             moveDirection.y -= gravity * Time.deltaTime;
         }
 
-        #endregion
 
-        #region Handles Rotation
         characterController.Move(moveDirection * Time.deltaTime);
 
         if (canMove)
@@ -84,6 +72,5 @@ public class FPSController : MonoBehaviour
             transform.rotation *= Quaternion.Euler(0, Input.GetAxis("Mouse X") * lookSpeed, 0);
         }
 
-        #endregion
     }
 }
