@@ -11,7 +11,7 @@ public class Generation : MonoBehaviour
 {
     // Start is called before the first frame update
     //offset is 10?
-    public GameObject[] rooms;//1= start, 2= newPos, 3= left turn, 4 = right turn
+    public GameObject[] rooms;//1= start, 2= straight, 3= left turn, 4 = right turn
     public int numRooms = 10;
     private Vector3 currentPos;
     private int rotation;
@@ -31,6 +31,7 @@ public class Generation : MonoBehaviour
         pastPositions[0] = currentPos;
         direction = "posx";
         currentPos = new Vector3(10, 0, 0);
+        
         for(int i = 1; i < numRooms; i++)
         {
             int rand = Random.Range(1, rooms.Length);//randomly selects newPos, left turn, or right turn
