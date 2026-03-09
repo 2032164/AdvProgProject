@@ -24,6 +24,9 @@ public class Generation : MonoBehaviour
     //every left turn = -90 deg of rotation and switches to moving on z axis
     //every right turn = +90 deg of rotation and switches to moving on -z axis
 
+
+
+///FOR SOME REASON, Three right turn keep happening and they cause it to double back on its self
  
     void Start(){
         bool branching = false;
@@ -128,9 +131,8 @@ public class Generation : MonoBehaviour
                 }
             }
         }
-
+        Debug.Log("FINISHED");
         Instantiate(rooms[5], currentPos, Quaternion.Euler(0, rotation, 0));//makes end room
-    
     }
 
      private Vector3 newPos(Vector3 currentPos, string direction)
