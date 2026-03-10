@@ -43,7 +43,8 @@ public class Generation : MonoBehaviour
         ///FOR SOMEREASON IF ITS A STRAIGHT HALLWAY AT THE START,IT NEVER GETS ADDED TO PAST POSITIONS
         for(int i = 1; i < numRooms-2; i++){
             int rand;
-            pastPositions[i] = currentPos;//this has to be here bc or else it only records the position after the room is made aka the next position
+            pastPositions[i] = currentPos;//this has to be here bc or else it only records the position after the room is made aka the next position sothin in he dont work
+            Debug.Log(currentPos);
             if(maxNumBranches > 0 && !branching){
                 rand = Random.Range(1, rooms.Length-1);
             }
@@ -109,7 +110,7 @@ public class Generation : MonoBehaviour
                     i--; 
                 }
             }
-            else if (rand == 4){//branch
+            else if (rand == 4 && i<numRooms-3){//branch
                 string d1 = leftTurn(direction);
                 string d2 = rightTurn(direction);
                 if(checkNextPos(currentPos, d1) && checkNextPos(currentPos, d2)){//not cjhecking right
