@@ -12,6 +12,8 @@ public class Enemy : MonoBehaviour
     public float activeDistance = 10f;
     public float lostIntrestDistance = 15f;
     public Transform player;
+    public GameObject player;
+    public float health = 100f;
     UnityEngine.AI.NavMeshAgent agent;
     Vector3 spawn;
     bool isChasing = false;
@@ -24,6 +26,9 @@ public class Enemy : MonoBehaviour
 
     void Update()
     {
+        if(health <=0){
+            Destroy(gameObject);
+        }
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
         if(!isChasing && distanceToPlayer <= activeDistance)
@@ -41,5 +46,11 @@ public class Enemy : MonoBehaviour
             agent.SetDestination(player.position);
         }
 
+    }
+    private void OnCollisionEnter(Collision collision){
+        GameObject hit = collision.GameObject;
+        if(hit == player){
+            health -=5;
+        }
     }
 }
