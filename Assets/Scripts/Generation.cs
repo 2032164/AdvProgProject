@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Numerics;
 using UnityEngine;
+using Unity.AI.Navigation;
 using Vector3 = UnityEngine.Vector3;
 using Quaternion = UnityEngine.Quaternion;
 using Debug = UnityEngine.Debug;
@@ -15,6 +16,9 @@ public class Generation : MonoBehaviour
     public GameObject[] rooms;//1= start, 2= straight, 3= left turn, 4 = right turn, 5 = branch, 6 = end
     public int numRooms = 10;
     public int maxNumBranches = 1;
+
+    public Transform root;
+    public NavMeshSurface surface;
     private Vector3 currentPos;
     private int rotation;
     private string direction;
@@ -36,7 +40,7 @@ public class Generation : MonoBehaviour
         int branchRotation = 0;
         GameObject temp = null;
         pastPositions = new Vector3[100];//SHOULD BE MAX ROOMS
-        Instantiate(rooms[0], currentPos, Quaternion.identity);//makes start room
+        Instantiate(rooms[0], currentPos, Quaternion.identity,root);//makes start room
         pastPositions[0] = currentPos;
         direction = "posx";
         currentPos.x+=10;
@@ -61,7 +65,7 @@ public class Generation : MonoBehaviour
             {
                 //Debug.Log("Done with branch, returning to main path. Current pos: " + currentPos + " branch pos: " + branchPos + " branch dir: " + branchDir + " direction: " + direction);
                 branching = false;
-                Instantiate(rooms[5], currentPos, Quaternion.Euler(0, rotation, 0));
+                Instantiate(rooms[5], currentPos, Quaternion.Euler(0, rotation, 0),root);
                 direction = branchDir;
                 currentPos = branchPos;
                 rotation = branchRotation;
@@ -72,7 +76,7 @@ public class Generation : MonoBehaviour
             if (rand == 1){//straight
                 if(checkNextPos(currentPos, direction))
                 {
-                    Instantiate(temp, currentPos, Quaternion.Euler(0, rotation, 0));
+                    Instantiate(temp, currentPos, Quaternion.Euler(0, rotation, 0),root);
                     currentPos = newPos(currentPos, direction);
                 }
                 else{
@@ -85,7 +89,7 @@ public class Generation : MonoBehaviour
 
                 if(checkNextPos(currentPos, tempDirection)){
                     //Debug.Log("left turn" + currentPos + direction);
-                    Instantiate(temp, currentPos, Quaternion.Euler(0, rotation, 0));
+                    Instantiate(temp, currentPos, Quaternion.Euler(0, rotation, 0),root);
                     rotation -= 90;
                     direction = tempDirection;
                     currentPos = newPos(currentPos, direction);
@@ -100,7 +104,7 @@ public class Generation : MonoBehaviour
                 string tempDirection = rightTurn(direction);
                 if(checkNextPos(currentPos, tempDirection)){
                 //Debug.Log("right turn" + currentPos + direction);
-                    Instantiate(temp, currentPos, Quaternion.Euler(0, rotation, 0));
+                    Instantiate(temp, currentPos, Quaternion.Euler(0, rotation, 0),root);
                     rotation += 90;
                     direction = tempDirection;
                     currentPos = newPos(currentPos, direction);
@@ -115,7 +119,7 @@ public class Generation : MonoBehaviour
                 string d2 = rightTurn(direction);
                 if(checkNextPos(currentPos, d1) && checkNextPos(currentPos, d2)){//not cjhecking right
                     //Debug.Log("branch" + currentPos + direction);
-                    Instantiate(temp, currentPos, Quaternion.Euler(0, rotation, 0));
+                    Instantiate(temp, currentPos, Quaternion.Euler(0, rotation, 0),root);
                     maxNumBranches-=1;
                     branching = true;
                     branchPos = newPos(currentPos,d2);
@@ -133,7 +137,8 @@ public class Generation : MonoBehaviour
             }
         }
         Debug.Log("FINISHED");
-        Instantiate(rooms[5], currentPos, Quaternion.Euler(0, rotation, 0));//makes end room
+        Instantiate(rooms[5], currentPos, Quaternion.Euler(0, rotation, 0),root);//makes end room
+        surface.BuildNavMesh();
     }
 
      private Vector3 newPos(Vector3 currentPos, string direction)
@@ -206,4 +211,5 @@ public class Generation : MonoBehaviour
             return ((numRooms - i) / 2) - 1;
         }
     }
+
 }
