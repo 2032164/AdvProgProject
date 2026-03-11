@@ -16,9 +16,11 @@ public class Generation : MonoBehaviour
     public GameObject[] rooms;//1= start, 2= straight, 3= left turn, 4 = right turn, 5 = branch, 6 = end
     public int numRooms = 10;
     public int maxNumBranches = 1;
-
     public Transform root;
     public NavMeshSurface surface;
+    public Transform player;
+    public GameObject playerBody;
+
     private Vector3 currentPos;
     private int rotation;
     private string direction;
@@ -76,7 +78,9 @@ public class Generation : MonoBehaviour
             if (rand == 1){//straight
                 if(checkNextPos(currentPos, direction))
                 {
-                    Instantiate(temp, currentPos, Quaternion.Euler(0, rotation, 0),root);
+                    Room room = Instantiate(temp, currentPos, Quaternion.Euler(0, rotation, 0),root).GetComponent<Room>();
+                    room.player = this.player;
+                    room.playerBody = this.playerBody;
                     currentPos = newPos(currentPos, direction);
                 }
                 else{

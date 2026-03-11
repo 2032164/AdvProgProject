@@ -12,7 +12,7 @@ public class Enemy : MonoBehaviour
     public float activeDistance = 10f;
     public float lostIntrestDistance = 15f;
     public Transform player;
-    public GameObject player;
+    public GameObject playerBody;
     public float health = 100f;
     UnityEngine.AI.NavMeshAgent agent;
     Vector3 spawn;
@@ -48,9 +48,11 @@ public class Enemy : MonoBehaviour
 
     }
     private void OnCollisionEnter(Collision collision){
-        GameObject hit = collision.GameObject;
-        if(hit == player){
+        Debug.Log("Hit smthing");
+        GameObject hit = collision.gameObject;
+        if(hit == playerBody){
             health -=5;
+            Debug.Log("Hit by player,"+ health);
         }
     }
 }
