@@ -7,7 +7,7 @@ public class HealthBar : MonoBehaviour
 {
     public bool healing;
     public float maxHealth;
-    private bool healAmount = .01f;
+    private float healAmount = .01f;
     // Start is called before the first frame update
     [SerializeField]
     private Image healthBarFill;
@@ -20,6 +20,9 @@ public class HealthBar : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        healthBarFill.fillAmount += healAmount;
+        //if(healthBarFill.fill < maxHealth){
+        //    healthBarFill.fillAmount += .01f;
+        //}
+
     }
 }
