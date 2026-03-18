@@ -76,15 +76,22 @@ public class FPSController : MonoBehaviour
 
     void OnControllerColliderHit(ControllerColliderHit hit)
     {
+        Enemy enemy = hit.transform.root.GetComponent<Enemy>();
+        if (enemy != null)
+        {
+            enemy.OnPlayerBumped(gameObject, hit);
+            enemy.KnockbackFrom(transform, 4f, 0.15f);
+            return;
+
+        }
+
+        // 2) Your existing push logic (for dynamic rigidbodies)
         Rigidbody body = hit.collider.attachedRigidbody;
         if (body == null || body.isKinematic)
-        {
             return;
-        }
+
         if (hit.moveDirection.y < -0.3f)
-        {
             return;
-        }
 
         Vector3 pushDir = new Vector3(hit.moveDirection.x, 0, hit.moveDirection.z);
         body.velocity = pushDir * walkSpeed;

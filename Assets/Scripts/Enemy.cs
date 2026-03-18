@@ -14,6 +14,7 @@ public class Enemy : MonoBehaviour
     public Transform player;
     public GameObject playerBody;
     public float health = 100f;
+    private bool iFrame = false;
     UnityEngine.AI.NavMeshAgent agent;
     Vector3 spawn;
     bool isChasing = false;
@@ -47,12 +48,45 @@ public class Enemy : MonoBehaviour
         }
 
     }
-    private void OnCollisionEnter(Collision collision){
-        Debug.Log("Hit smthing");
-        GameObject hit = collision.gameObject;
-        if(hit == playerBody){
-            health -=5;
-            Debug.Log("Hit by player,"+ health);
+    public void OnPlayerBumped(GameObject player, ControllerColliderHit hit)
+    {
+        Debug.Log($"{name} was hit by {player.name}");
+        TakeDamage(5f);
+    }
+
+    public void TakeDamage(float dmg)
+    {
+        if (iFrame) return;
+        health -= dmg;
+        Debug.Log($"{name} health now {health}");
+
+        if (health <= 0f)
+            Destroy(gameObject);
+    }
+
+    public void KnockbackFrom(Transform source, float speed, float time)
+    {
+        StartCoroutine(KnockbackRoutine(source, speed, time));
+    }
+
+    private IEnumerator KnockbackRoutine(Transform source, float speed, float time)
+    {
+        agent.isStopped = true;
+        iFrame = true;
+
+        Vector3 dir = (transform.position - source.position);
+        dir.y = 0f;
+        dir = dir.normalized;
+
+        float t = 0f;
+        while (t < time)
+        {
+            agent.Move(dir * speed * Time.deltaTime);
+            t += Time.deltaTime;
+            yield return null;
         }
+
+        agent.isStopped = false;
+        iFrame = false;
     }
 }

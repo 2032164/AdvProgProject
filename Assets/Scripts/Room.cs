@@ -14,7 +14,8 @@ public class Room : MonoBehaviour
     {
         float num = Random.Range(0.0f,1.0f);
         if(num<=spawnChance){
-            Enemy enemy = Instantiate(toSpawn,spawnPoint.position,Quaternion.identity).GetComponent<Enemy>();
+            Quaternion spawnRotation = transform.rotation * Quaternion.Euler(0f, -90f, 0f);
+            Enemy enemy = Instantiate(toSpawn, spawnPoint.position, spawnRotation).GetComponent<Enemy>();
             enemy.player = player;
             enemy.playerBody = playerBody;
         }
