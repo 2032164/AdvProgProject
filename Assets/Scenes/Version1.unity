@@ -932,6 +932,8 @@ MonoBehaviour:
   - {fileID: 8671394791680182378, guid: a59d9865991107e4b8711563c3ce4f8c, type: 3}
   - {fileID: 308335371051950058, guid: 535de3f65d12ca94997fe663824df099, type: 3}
   - {fileID: 8049930906008681415, guid: 5955d5405587563438b7783b68b5f280, type: 3}
+  decor:
+  - {fileID: 4057728417564994144, guid: 9d7616c493cfbc143b776394278f3aa8, type: 3}
   numRooms: 30
   maxNumBranches: 3
   root: {fileID: 1947602757}

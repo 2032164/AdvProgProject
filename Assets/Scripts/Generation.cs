@@ -14,6 +14,7 @@ public class Generation : MonoBehaviour
     // Start is called before the first frame update
     //offset is 10?
     public GameObject[] rooms;//1= start, 2= straight, 3= left turn, 4 = right turn, 5 = branch, 6 = end
+    public GameObject[] decor;
     public int numRooms = 10;
     public int maxNumBranches = 1;
     public Transform root;
@@ -139,6 +140,13 @@ public class Generation : MonoBehaviour
                     i--;
                 }
             }
+
+            //start of random decor elements
+            if(Random.Range(0f,1f) < .5f){
+                int decorRand = Random.Range(0, decor.Length);
+                GameObject decorTemp = decor[decorRand];
+                Instantiate(decorTemp, addRandomOffset(currentPos), randomRotation(), root);
+            }
         }
         Debug.Log("FINISHED");
         Instantiate(rooms[5], currentPos, Quaternion.Euler(0, rotation, 0),root);//makes end room
@@ -216,4 +224,32 @@ public class Generation : MonoBehaviour
         }
     }
 
+    private Vector3 addRandomOffset(Vector3 pos)
+    {
+        float xOffset = randomOutsideCenter(-3f, 3f, -1f, 1f);
+        float zOffset = randomOutsideCenter(-3f, 3f, -1f, 1f);
+        
+        return new Vector3(pos.x + xOffset, pos.y, pos.z + zOffset);
+    }
+
+    private float randomOutsideCenter(float min, float max, float blockedMin, float blockedMax)
+    {
+        float leftSize = blockedMin - min;
+        float rightSize = max - blockedMax;
+        float totalSize = leftSize + rightSize;
+
+        float pick = Random.Range(0f, totalSize);
+        if (pick < leftSize)
+        {
+            return Random.Range(min, blockedMin);
+        }
+
+        return Random.Range(blockedMax, max);
+    }
+
+    private Quaternion randomRotation()
+    {
+        float yRotation = Random.Range(0f, 360f);
+        return Quaternion.Euler(0f, yRotation, 0f);
+    }
 }
