@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
 [RequireComponent(typeof(CharacterController))]
@@ -15,6 +16,8 @@ public class FPSController : MonoBehaviour
 
     public float lookSpeed = 2f;
     public float lookXLimit = 45f;
+
+    public float health = 100f;
 
 
         Vector3 moveDirection = Vector3.zero;
@@ -81,6 +84,7 @@ public class FPSController : MonoBehaviour
         {
             enemy.OnPlayerBumped(gameObject, hit);
             enemy.KnockbackFrom(transform, 4f, 0.15f);
+            health -= enemy.damage;
             return;
 
         }
@@ -95,5 +99,9 @@ public class FPSController : MonoBehaviour
 
         Vector3 pushDir = new Vector3(hit.moveDirection.x, 0, hit.moveDirection.z);
         body.velocity = pushDir * walkSpeed;
+    }
+
+    public float getHealth(){
+        return (float)health;
     }
 }

@@ -151,6 +151,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 1860027890}
   - {fileID: 1779983133}
   - {fileID: 1418462394}
   m_Father: {fileID: 0}
@@ -175,6 +176,7 @@ MonoBehaviour:
   airDrag: 0.75
   lookSpeed: 2
   lookXLimit: 45
+  health: 100
   canMove: 1
 --- !u!143 &281601957
 CharacterController:
@@ -874,7 +876,7 @@ RectTransform:
   m_Children:
   - {fileID: 1836318345}
   - {fileID: 1280595589}
-  m_Father: {fileID: 0}
+  m_Father: {fileID: 281601955}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -895,6 +897,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   healing: 0
   maxHealth: 1
+  player: {fileID: 281601954}
   healthBarFill: {fileID: 1280595587}
 --- !u!1 &1947602755
 GameObject:
@@ -934,6 +937,8 @@ MonoBehaviour:
   - {fileID: 8049930906008681415, guid: 5955d5405587563438b7783b68b5f280, type: 3}
   decor:
   - {fileID: 4057728417564994144, guid: 9d7616c493cfbc143b776394278f3aa8, type: 3}
+  - {fileID: 2017145363860909662, guid: eb573edc2d47aae41ad121d9f2251a57, type: 3}
+  - {fileID: 5415639311186551661, guid: 18aef69c708213e47963f57f660d2482, type: 3}
   numRooms: 30
   maxNumBranches: 3
   root: {fileID: 1947602757}
@@ -964,4 +969,3 @@ SceneRoots:
   - {fileID: 1947602757}
   - {fileID: 281601955}
   - {fileID: 905053972}
-  - {fileID: 1860027890}

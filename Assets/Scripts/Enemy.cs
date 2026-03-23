@@ -14,6 +14,7 @@ public class Enemy : MonoBehaviour
     public Transform player;
     public GameObject playerBody;
     public float health = 100f;
+    public float damage = 10f;
     private bool iFrame = false;
     UnityEngine.AI.NavMeshAgent agent;
     Vector3 spawn;
@@ -50,7 +51,6 @@ public class Enemy : MonoBehaviour
     }
     public void OnPlayerBumped(GameObject player, ControllerColliderHit hit)
     {
-        Debug.Log($"{name} was hit by {player.name}");
         TakeDamage(5f);
     }
 

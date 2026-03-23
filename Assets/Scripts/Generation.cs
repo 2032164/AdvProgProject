@@ -36,13 +36,14 @@ public class Generation : MonoBehaviour
 ///FOR SOME REASON, Three right turn keep happening and they cause it to double back on its self
  
     void Start(){
+        ArrayList decorPositions = new ArrayList();
         bool branching = false;
         Vector3 branchPos = new Vector3(0,0,0);
         string branchDir = null;;
         int branchesLeft = 0;
         int branchRotation = 0;
         GameObject temp = null;
-        pastPositions = new Vector3[100];//SHOULD BE MAX ROOMS
+        pastPositions = new Vector3[numRooms+1];
         Instantiate(rooms[0], currentPos, Quaternion.identity,root);//makes start room
         pastPositions[0] = currentPos;
         direction = "posx";
@@ -143,14 +144,17 @@ public class Generation : MonoBehaviour
 
             //start of random decor elements
             if(Random.Range(0f,1f) < .5f){
-                int decorRand = Random.Range(0, decor.Length);
-                GameObject decorTemp = decor[decorRand];
-                Instantiate(decorTemp, addRandomOffset(currentPos), randomRotation(), root);
+                decorPositions.Add(currentPos);
             }
         }
         Debug.Log("FINISHED");
         Instantiate(rooms[5], currentPos, Quaternion.Euler(0, rotation, 0),root);//makes end room
         surface.BuildNavMesh();
+        foreach(Vector3 decorPos in decorPositions){
+            int decorRand = Random.Range(0, decor.Length);
+            GameObject decorTemp = decor[decorRand];
+            Instantiate(decorTemp, addRandomOffset(decorPos), randomRotation(), root);
+        }
     }
 
      private Vector3 newPos(Vector3 currentPos, string direction)
