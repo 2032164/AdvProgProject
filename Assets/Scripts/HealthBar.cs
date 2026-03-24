@@ -7,28 +7,52 @@ using UnityEngine.UI;
 
 public class HealthBar : MonoBehaviour
 {
-    public bool healing;
     public float maxHealth;
     public GameObject player;
-    private float healAmount = .01f;
+
+    [SerializeField]
+    private float healDelay = 3f;
+
+    [SerializeField]
+    private float healAmount = 10f;
+
+    private FPSController fpsController;
+    private float previousHealth;
+    private float lastDamageTime;
+
     // Start is called before the first frame update
     [SerializeField]
     private Image healthBarFill;
+
     void Start()
     {
-        //need to figure out how to make the fill amount scale to the right full health if that makes sense
-        healthBarFill.fillAmount = player.GetComponent<FPSController>().health / maxHealth;
+        fpsController = player.GetComponent<FPSController>();
+        previousHealth = fpsController.getHealth();
+        lastDamageTime = Time.time;
+
+        healthBarFill.fillAmount = Mathf.Clamp01(previousHealth / maxHealth);
     }
 
     // Update is called once per frame
     void Update()
     {
-        healthBarFill.fillAmount = player.GetComponent<FPSController>().getHealth() / maxHealth;
-        UnityEngine.Debug.Log($"Player health: {player.GetComponent<FPSController>().getHealth()}");
-        UnityEngine.Debug.Log($"Health bar fill amount: {healthBarFill.fillAmount}");
-        //if(healthBarFill.fill < maxHealth){
-        //    healthBarFill.fill += healAmount;
-        //}
+        float currentHealth = fpsController.getHealth();
 
+        if (currentHealth < previousHealth)
+        {
+            lastDamageTime = Time.time;
+        }
+
+        bool cooldownComplete = Time.time - lastDamageTime >= healDelay;
+        if (cooldownComplete && currentHealth < maxHealth)
+        {
+            fpsController.health = Mathf.Min(maxHealth, fpsController.health + (healAmount * Time.deltaTime));
+            currentHealth = fpsController.health;
+        }
+        else
+        {
+        }
+        healthBarFill.fillAmount = Mathf.Clamp01(currentHealth / maxHealth);
+        previousHealth = currentHealth;
     }
 }

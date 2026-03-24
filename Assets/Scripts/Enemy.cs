@@ -13,6 +13,7 @@ public class Enemy : MonoBehaviour
     public float lostIntrestDistance = 15f;
     public Transform player;
     public GameObject playerBody;
+    public float maxHealth = 100f;
     public float health = 100f;
     public float damage = 10f;
     private bool iFrame = false;
