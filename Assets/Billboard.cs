@@ -15,6 +15,10 @@ public class Billboard : MonoBehaviour
     void Update()
     {
         transform.LookAt(mainCamera.transform);
-        transform.Rotate(90,0,0);
+        transform.Rotate(0,90,90);//(clockwise),(idk,left-right?),(fallback-facing up to the player)x,y,z
+        Vector3 euler = transform.eulerAngles;
+        euler.z = 90;
+        transform.eulerAngles = euler;
+
     }
 }

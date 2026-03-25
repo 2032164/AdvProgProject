@@ -52,7 +52,6 @@ public class Generation : MonoBehaviour
         for(int i = 1; i < numRooms-2; i++){
             int rand;
             pastPositions[i] = currentPos;//this has to be here bc or else it only records the position after the room is made aka the next position sothin in he dont work
-            Debug.Log(currentPos);
             if(maxNumBranches > 0 && !branching){
                 rand = Random.Range(1, rooms.Length-1);
             }
@@ -147,7 +146,6 @@ public class Generation : MonoBehaviour
                 decorPositions.Add(currentPos);
             }
         }
-        Debug.Log("FINISHED");
         Instantiate(rooms[5], currentPos, Quaternion.Euler(0, rotation, 0),root);//makes end room
         surface.BuildNavMesh();
         foreach(Vector3 decorPos in decorPositions){

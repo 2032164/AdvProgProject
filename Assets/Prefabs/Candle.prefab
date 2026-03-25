@@ -4851,6 +4851,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5344717693506173133}
+  - component: {fileID: 716067388869846621}
   m_Layer: 0
   m_Name: Candle
   m_TagString: Untagged
@@ -4874,6 +4875,21 @@ Transform:
   - {fileID: 361475988052580908}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &716067388869846621
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2584684797755028194}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 29ea9d3433ac3da46836f2dab49c77b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  candle: {fileID: 9006622301109779971}
+  maxTestValue: 0.7
+  minTestValue: 0.6
 --- !u!1 &9006622301109779971
 GameObject:
   m_ObjectHideFlags: 0
@@ -4885,7 +4901,7 @@ GameObject:
   - component: {fileID: 3807836683535112293}
   - component: {fileID: 7438620938324218582}
   m_Layer: 0
-  m_Name: Area Light
+  m_Name: AreaLight
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
