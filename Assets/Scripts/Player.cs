@@ -18,6 +18,7 @@ public class FPSController : MonoBehaviour
     public float lookXLimit = 45f;
 
     public float health = 100f;
+    public HotBar hotbar;
 
 
         Vector3 moveDirection = Vector3.zero;
@@ -36,7 +37,7 @@ public class FPSController : MonoBehaviour
 
     void Update()
     {
-
+        hotbar.OnScroll();
         
         Vector3 forward = transform.TransformDirection(Vector3.forward);
         Vector3 right = transform.TransformDirection(Vector3.right);
@@ -82,14 +83,14 @@ public class FPSController : MonoBehaviour
         Enemy enemy = hit.transform.root.GetComponent<Enemy>();
         if (enemy != null)
         {
-            enemy.OnPlayerBumped(gameObject, hit);
-            enemy.KnockbackFrom(transform, 4f, 0.15f);
+            //enemy.OnPlayerBumped(gameObject, hit);
+            //enemy.KnockbackFrom(transform, 4f, 0.15f);
             health -= enemy.damage;
             return;
 
         }
 
-        // 2) Your existing push logic (for dynamic rigidbodies)
+        
         Rigidbody body = hit.collider.attachedRigidbody;
         if (body == null || body.isKinematic)
             return;
@@ -99,9 +100,12 @@ public class FPSController : MonoBehaviour
 
         Vector3 pushDir = new Vector3(hit.moveDirection.x, 0, hit.moveDirection.z);
         body.velocity = pushDir * walkSpeed;
+        
     }
 
     public float getHealth(){
         return (float)health;
     }
+
+
 }
