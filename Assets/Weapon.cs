@@ -47,4 +47,17 @@ public class Weapon : MonoBehaviour
         UnityEngine.Debug.Log("Weapon hit " + enemy.name);
     }
 
+    public void Equip(Transform root)
+    {
+        Instantiate(this.gameObject, root);
+        transform.SetParent(root);
+        //transform.localPosition = Vector3.zero;
+        //transform.eulerAngles = Vector3.zero;
+    }
+
+    public void Unequip()
+    {
+        transform.SetParent(null);
+    }
+
 }
