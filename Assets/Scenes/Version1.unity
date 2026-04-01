@@ -942,15 +942,9 @@ Transform:
   m_LocalPosition: {x: 0.5, y: 0, z: 0.55}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children:
-  - {fileID: 1737364663}
+  m_Children: []
   m_Father: {fileID: 281601955}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &1737364663 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 7652066736284698388, guid: 79b1ed67f78207144957aa17e1519003, type: 3}
-  m_PrefabInstance: {fileID: 8142965298032512913}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1779983132
 GameObject:
   m_ObjectHideFlags: 0
@@ -1262,16 +1256,11 @@ MonoBehaviour:
   - {fileID: 1159027393}
   - {fileID: 285748031}
   - {fileID: 193483677}
-  itemIcons:
-  - {fileID: 21300000, guid: d033a5fc6adcbec409b0c52142d762c4, type: 3}
-  - {fileID: 21300000, guid: d033a5fc6adcbec409b0c52142d762c4, type: 3}
-  - {fileID: 21300000, guid: d033a5fc6adcbec409b0c52142d762c4, type: 3}
-  - {fileID: 21300000, guid: d033a5fc6adcbec409b0c52142d762c4, type: 3}
   items:
   - {fileID: 7024008533580799406, guid: 79b1ed67f78207144957aa17e1519003, type: 3}
   - {fileID: 294148513509463018, guid: 8ac6ddf814bac9247bc7d0cf67939001, type: 3}
   - {fileID: 7024008533580799406, guid: 79b1ed67f78207144957aa17e1519003, type: 3}
-  - {fileID: 294148513509463018, guid: 8ac6ddf814bac9247bc7d0cf67939001, type: 3}
+  - {fileID: 4378907928120311756, guid: 63e45f3e9dce5324c98e9701269edd6f, type: 3}
   root: {fileID: 1568942780}
   selectedSlot: 0
   hotbarSelector: {fileID: 1994096885}
@@ -1412,63 +1401,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1994096883}
   m_CullTransparentMesh: 1
---- !u!1001 &8142965298032512913
-PrefabInstance:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    serializedVersion: 3
-    m_TransformParent: {fileID: 1568942780}
-    m_Modifications:
-    - target: {fileID: 7024008533580799406, guid: 79b1ed67f78207144957aa17e1519003, type: 3}
-      propertyPath: m_Name
-      value: Sword
-      objectReference: {fileID: 0}
-    - target: {fileID: 7652066736284698388, guid: 79b1ed67f78207144957aa17e1519003, type: 3}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7652066736284698388, guid: 79b1ed67f78207144957aa17e1519003, type: 3}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7652066736284698388, guid: 79b1ed67f78207144957aa17e1519003, type: 3}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7652066736284698388, guid: 79b1ed67f78207144957aa17e1519003, type: 3}
-      propertyPath: m_LocalRotation.w
-      value: 0.9099613
-      objectReference: {fileID: 0}
-    - target: {fileID: 7652066736284698388, guid: 79b1ed67f78207144957aa17e1519003, type: 3}
-      propertyPath: m_LocalRotation.x
-      value: 0.41469327
-      objectReference: {fileID: 0}
-    - target: {fileID: 7652066736284698388, guid: 79b1ed67f78207144957aa17e1519003, type: 3}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7652066736284698388, guid: 79b1ed67f78207144957aa17e1519003, type: 3}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7652066736284698388, guid: 79b1ed67f78207144957aa17e1519003, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.x
-      value: 49
-      objectReference: {fileID: 0}
-    - target: {fileID: 7652066736284698388, guid: 79b1ed67f78207144957aa17e1519003, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 7652066736284698388, guid: 79b1ed67f78207144957aa17e1519003, type: 3}
-      propertyPath: m_LocalEulerAnglesHint.z
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-    m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: 79b1ed67f78207144957aa17e1519003, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

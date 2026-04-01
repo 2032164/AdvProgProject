@@ -10,6 +10,8 @@ public class Weapon : MonoBehaviour
 
     // Make this true if your weapon collider is intended to be a trigger.
     [SerializeField] private bool forceTrigger = true;
+    public Sprite weaponIcon;
+    private GameObject thisWeapon;
 
     void Start()
     {
@@ -49,7 +51,7 @@ public class Weapon : MonoBehaviour
 
     public void Equip(Transform root)
     {
-        Instantiate(this.gameObject, root);
+        thisWeapon = Instantiate(this.gameObject, root);
         transform.SetParent(root);
         //transform.localPosition = Vector3.zero;
         //transform.eulerAngles = Vector3.zero;
@@ -57,7 +59,8 @@ public class Weapon : MonoBehaviour
 
     public void Unequip()
     {
-        transform.SetParent(null);
+        Destroy(thisWeapon);
+        UnityEngine.Debug.Log("Weapon unequipped/Destroyed");
     }
 
 }
