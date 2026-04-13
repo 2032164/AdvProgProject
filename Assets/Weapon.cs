@@ -53,14 +53,11 @@ public class Weapon : MonoBehaviour
     {
         thisWeapon = Instantiate(this.gameObject, root);
         transform.SetParent(root);
-        //transform.localPosition = Vector3.zero;
-        //transform.eulerAngles = Vector3.zero;
     }
 
     public void Unequip()
     {
         Destroy(thisWeapon);
-        UnityEngine.Debug.Log("Weapon unequipped/Destroyed");
     }
 
 }
