@@ -48,7 +48,6 @@ public class Generation : MonoBehaviour
         pastPositions[0] = currentPos;
         direction = "posx";
         currentPos.x+=10;
-        ///FOR SOMEREASON IF ITS A STRAIGHT HALLWAY AT THE START,IT NEVER GETS ADDED TO PAST POSITIONS
         for(int i = 1; i < numRooms-2; i++){
             int rand;
             pastPositions[i] = currentPos;//this has to be here bc or else it only records the position after the room is made aka the next position sothin in he dont work
