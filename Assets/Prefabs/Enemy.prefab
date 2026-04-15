@@ -56,7 +56,7 @@ MonoBehaviour:
   playerBody: {fileID: 0}
   maxHealth: 100
   health: 100
-  damage: 1
+  damage: 15
 --- !u!195 &4154577479153942369
 NavMeshAgent:
   m_ObjectHideFlags: 0
