@@ -67,6 +67,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spellGen: {fileID: 3570789680882635987}
+  topGem: {fileID: 5773456224190934402}
+  bottomGem: {fileID: 4560311861602187815}
 --- !u!1 &8178600602917302504
 GameObject:
   m_ObjectHideFlags: 0
@@ -357,6 +359,16 @@ PrefabInstance:
 --- !u!4 &3570789680882635987 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 1818308533947869790, guid: 6e871f4f86dd87940bbb010e0435e6df, type: 3}
+  m_PrefabInstance: {fileID: 2933553860668948109}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &4560311861602187815 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1729215991971939498, guid: 6e871f4f86dd87940bbb010e0435e6df, type: 3}
+  m_PrefabInstance: {fileID: 2933553860668948109}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &5773456224190934402 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8694617347564950287, guid: 6e871f4f86dd87940bbb010e0435e6df, type: 3}
   m_PrefabInstance: {fileID: 2933553860668948109}
   m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8633974917578619389

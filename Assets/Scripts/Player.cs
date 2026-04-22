@@ -100,7 +100,6 @@ public class FPSController : MonoBehaviour
 
         Vector3 pushDir = new Vector3(hit.moveDirection.x, 0, hit.moveDirection.z);
         body.velocity = pushDir * walkSpeed;
-        
     }
 
     public float getHealth(){
