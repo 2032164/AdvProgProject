@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using UnityEngine;
 
 public class Weapon : MonoBehaviour
@@ -10,9 +11,6 @@ public class Weapon : MonoBehaviour
     [SerializeField] private float collisionPushSpeed = 6f;
     [SerializeField] private Animator anim;
     [SerializeField] private string attackTriggerName = "Attack";
-    [SerializeField] private string swingStateName = "SwordSwing";
-
-    // Make this true if your weapon collider is intended to be a trigger.
     [SerializeField] private bool forceTrigger = false;
     public Sprite weaponIcon;
     private GameObject thisWeapon;
@@ -26,15 +24,15 @@ public class Weapon : MonoBehaviour
         }
     }
 
-    // Update is called once per frame
     void Update()
     {
         if(Input.GetMouseButtonDown(0))
         {
-            if (anim != null)
+            if (anim != null && !AnimatorIsPlaying(attackTriggerName))
             {
                 anim.SetTrigger(attackTriggerName);
             }
+            
         }
     }
 
@@ -52,14 +50,11 @@ public class Weapon : MonoBehaviour
 
     private void TryPushRigidbody(Collider hitCollider)
     {
-        if (!IsSwinging())
-        {
-            return;
-        }
-
+        UnityEngine.Debug.Log("Trying to push rigidbody");
         Rigidbody body = hitCollider.attachedRigidbody;
         if (body == null || body.isKinematic)
         {
+            UnityEngine.Debug.Log("Trying to push rigidbody but it has no rigidbody or is kinematic");
             return;
         }
 
@@ -67,47 +62,23 @@ public class Weapon : MonoBehaviour
         pushDir.y = 0f;
         if (pushDir.sqrMagnitude < 0.0001f)
         {
+            UnityEngine.Debug.Log("Trying to push rigidbody but push direction is too small");
             return;
         }
-
+        UnityEngine.Debug.Log("Pushing rigidbody");
         body.AddForce(pushDir.normalized * collisionPushSpeed, ForceMode.VelocityChange);
     }
 
     private void TryHitEnemy(Transform root)
     {
-        if(!IsSwinging())
-        {
-            return;
-        }
+        UnityEngine.Debug.Log("Trying to hit enemy");
         Enemy enemy = root.GetComponent<Enemy>();
         if (enemy == null)
             return;
-
+        UnityEngine.Debug.Log("Hit enemy");
         enemy.TakeDamage(damage);
         enemy.KnockbackFrom(transform, knockbackSpeed, knockbackDuration);
         UnityEngine.Debug.Log("Weapon hit " + enemy.name);
-    }
-
-    private bool IsSwinging()
-    {
-        if (anim == null)
-        {
-            return false;
-        }
-
-        AnimatorStateInfo current = anim.GetCurrentAnimatorStateInfo(0);
-        if (current.IsName(swingStateName))
-        {
-            return true;
-        }
-
-        if (anim.IsInTransition(0))
-        {
-            AnimatorStateInfo next = anim.GetNextAnimatorStateInfo(0);
-            return next.IsName(swingStateName);
-        }
-
-        return false;
     }
 
     public void Equip(Transform root)
@@ -119,6 +90,13 @@ public class Weapon : MonoBehaviour
     public void Unequip()
     {
         Destroy(thisWeapon);
+    }
+
+    bool AnimatorIsPlaying(){
+        return anim.GetCurrentAnimatorStateInfo(0).length > anim.GetCurrentAnimatorStateInfo(0).normalizedTime;
+    }
+    bool AnimatorIsPlaying(string stateName){
+        return AnimatorIsPlaying() && anim.GetCurrentAnimatorStateInfo(0).IsName(stateName);
     }
 
 }
