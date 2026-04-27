@@ -12,6 +12,7 @@ public class Staff : MonoBehaviour
     public GameObject topGem;
     public GameObject bottomGem;
     private Spell spell;
+    public GameObject[] spellPrefabs;//fireball,earthsmash?,waterbeam,wind?
     void Start()//THERES A PROBLEM WITH THE STAFF BECAUSE EACH TIME U SELECT IT IN HOTBAR IT REGENS BC THE OLD ONE GETS DESTROYED AND A NEW ONE GETS INSTANTIATED
     {
         RollSpell();
@@ -23,14 +24,14 @@ public class Staff : MonoBehaviour
         if(Input.GetMouseButtonDown(0))
         {
             Debug.Log("Mouse Clicked");
-            RollSpell();
-
+            //RollSpell();
+            spell.cast(spellGen, transform.forward);
         }
     }
 
     private void RollSpell()
     {
-        spell = new Spell(Random.Range(0,5),Random.Range(0,4));//need to change it so higher rarities are rarer
+        spell = new Spell(Random.Range(0,5),Random.Range(0,4), spellPrefabs);//need to change it so higher rarities are rarer
         SetGemColor(topGem, spell.rarity);
         SetGemColor(bottomGem, spell.spellType);
     }

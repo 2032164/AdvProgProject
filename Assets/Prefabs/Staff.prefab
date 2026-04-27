@@ -52,6 +52,9 @@ MonoBehaviour:
   damage: 5
   knockbackSpeed: 4
   knockbackDuration: 0.15
+  collisionPushSpeed: 6
+  anim: {fileID: 0}
+  attackTriggerName: Attack
   forceTrigger: 1
   weaponIcon: {fileID: 21300000, guid: 10aad7841a03f4446a656f15ac31077c, type: 3}
 --- !u!114 &3165727795074202172
@@ -69,6 +72,8 @@ MonoBehaviour:
   spellGen: {fileID: 3570789680882635987}
   topGem: {fileID: 5773456224190934402}
   bottomGem: {fileID: 4560311861602187815}
+  spellPrefabs:
+  - {fileID: 4001117318287470044, guid: e2fcf6dcdf702194facaed7f67bf20bb, type: 3}
 --- !u!1 &8178600602917302504
 GameObject:
   m_ObjectHideFlags: 0

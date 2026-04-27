@@ -7,10 +7,29 @@ public class Spell
     private Color[] rarityColors = {Color.grey,Color.green,Color.blue,Color.magenta,new Color(1f, 0.647f, 0f)};//each will correspond to a different spell type and top gem color [grey,green,blue,purple,orange]
     public Color spellType;//each will correspond to a different spell effect and bottom gem color
     private Color[] typeColors = {Color.red,new Color(0.4f, 0.2f, 0.1f), new Color(0f, 0.5f, 0.5f),Color.grey};//fire,earth,water,wind?
-    public Spell(int rarity,int spellType)
+
+    public double cooldown = .5;
+    private double lastCastTime = -9999;
+    public GameObject[] spellPrefabs;//fireball,earthsmash?,waterbeam,wind?
+
+    public Spell(int rarity,int spellType, GameObject[] spellPrefabs)
     {
         //need to make it so that first time it gets cast it creates a random spell and then after that it just casts the spell
         this.rarity = rarityColors[rarity];
         this.spellType = typeColors[spellType];
+        this.spellPrefabs = spellPrefabs;
+    }
+
+    public void cast(Transform spellGen, Vector3 direction)
+    {
+        //needs to create a spell prefab based on the rarity and spell type and then cast it in the direction
+        //for now just create a sphere and change its color based on the rarity and spell type
+        GameObject spell = UnityEngine.Object.Instantiate(spellPrefabs[0], spellGen.position, spellGen.rotation);//0 for now
+        FireBall fireball = spell.GetComponent<FireBall>();
+        if (fireball != null)
+        {
+            fireball.damage = 5f;//base damage, can be changed based on rarity and spell type
+            fireball.SetDirection(direction);
+        }
     }
 }
