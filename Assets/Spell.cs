@@ -28,7 +28,7 @@ public class Spell
         FireBall fireball = spell.GetComponent<FireBall>();
         if (fireball != null)
         {
-            fireball.damage = 5f;//base damage, can be changed based on rarity and spell type
+            fireball.damage = 5f * (1+(rarity*.1));
             fireball.SetDirection(direction);
         }
     }
