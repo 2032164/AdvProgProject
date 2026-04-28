@@ -29,7 +29,6 @@ public class HotBar : MonoBehaviour
         if(previousSelectedSlot == -1)
         {
             items[0].GetComponent<Weapon>().Equip(root);
-            UnityEngine.Debug.Log("Equipped " + items[0].name);
             previousSelectedSlot = 0;
         }
         if(Input.GetKeyDown(KeyCode.Alpha1))
@@ -52,9 +51,7 @@ public class HotBar : MonoBehaviour
         if (previousSelectedSlot != selectedSlot && previousSelectedSlot != -1)
         {
             items[previousSelectedSlot].GetComponent<Weapon>().Unequip();
-            UnityEngine.Debug.Log("Unequipped " + items[previousSelectedSlot].name);
             items[selectedSlot].GetComponent<Weapon>().Equip(root);
-            UnityEngine.Debug.Log("Equipped " + items[selectedSlot].name);
             previousSelectedSlot = selectedSlot;
         }
     }

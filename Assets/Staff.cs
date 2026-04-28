@@ -23,9 +23,7 @@ public class Staff : MonoBehaviour
     {
         if(Input.GetMouseButtonDown(0))
         {
-            Debug.Log("Mouse Clicked");
-            //RollSpell();
-            spell.cast(spellGen, transform.forward);
+            spell.cast(spellGen, GameObject.FindWithTag("MainCamera").transform.forward);
         }
     }
 

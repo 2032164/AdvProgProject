@@ -42,43 +42,37 @@ public class FireBall : MonoBehaviour
         }
         
         // Move the fireball forward
-        UnityEngine.Debug.Log("Fireball moving in direction: " + direction);
         if (directionSet)
         {
             transform.Translate(direction * speed * Time.deltaTime, Space.World);
         }
     }
 
-    // Called when this object collides with something
-    void OnTriggerEnter(Collider other)
-    {
-        TryHitEnemy(other.transform.root);
-        DestroyFireball();
-    }
 
     void OnCollisionEnter(Collision collision)
     {
-        TryHitEnemy(collision.transform.root);
+        UnityEngine.Debug.Log("Fireball collided with: " + collision.gameObject.name);
+        TryHitEnemy(collision.transform);
         DestroyFireball();
     }
 
     // Try to hit an enemy (similar to Weapon class pattern)
     private void TryHitEnemy(Transform root)
     {
-        if (root == null)
-            return;
-        
+        UnityEngine.Debug.Log("Trying to hit enemy");
         Enemy enemy = root.GetComponent<Enemy>();
         if (enemy == null)
             return;
-        
+        UnityEngine.Debug.Log("Hit enemy");
         enemy.TakeDamage(damage);
         enemy.KnockbackFrom(transform, knockbackSpeed, knockbackDuration);
+        UnityEngine.Debug.Log("Weapon hit " + enemy.name);
     }
 
     // Destroy fireball and its parent
     private void DestroyFireball()
     {
+        UnityEngine.Debug.Log("Destroying fireball");
         if (transform.parent != null)
         {
             Destroy(transform.parent.gameObject);
