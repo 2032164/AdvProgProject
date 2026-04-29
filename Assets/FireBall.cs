@@ -14,6 +14,7 @@ public class FireBall : MonoBehaviour
     public float damage = 5f; // Base damage, can be modified based on spell type and rarity
     public float knockbackSpeed = 1f;
     public float knockbackDuration = 0.5f;
+    public GameObject sphere;
 
     // Start is called before the first frame update
     void Start()
@@ -29,6 +30,13 @@ public class FireBall : MonoBehaviour
     public void SetDirection(Vector3 newDirection)
     {
         direction = newDirection.normalized;
+        if (sphere != null)
+        {
+            sphere.transform.rotation = Quaternion.LookRotation(direction);
+            sphere.transform.Rotate(90f, 0f, 0f);
+
+
+        }
         directionSet = true;
     }
 
