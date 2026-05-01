@@ -33,7 +33,6 @@ public class Spell
         }
         if (fireball != null)
         {
-            fireball.damage = 5f * multiplier;
             fireball.SetDirection(direction);
         }
     }

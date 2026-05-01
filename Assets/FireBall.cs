@@ -5,15 +5,15 @@ using UnityEngine;
 
 public class FireBall : MonoBehaviour
 {
-    public float timeout = 5f; // Destroy after 5 seconds
-    public float speed = 10f; // Speed of the fireball
+    public float timeout = 2f; // Destroy after 5 seconds
+    public float speed = 7.5f; // Speed of the fireball
     private float elapsedTime = 0f;
     private Vector3 direction;
     private Rigidbody rb;
     private bool directionSet = false;
-    public float damage = 5f; // Base damage, can be modified based on spell type and rarity
-    public float knockbackSpeed = 1f;
-    public float knockbackDuration = 0.5f;
+    public float damage = 30f; //
+    public float knockbackSpeed = 5f;
+    public float knockbackDuration = 1f;
     public GameObject sphere;
 
     // Start is called before the first frame update
@@ -60,7 +60,8 @@ public class FireBall : MonoBehaviour
     void OnCollisionEnter(Collision collision)
     {
         UnityEngine.Debug.Log("Fireball collided with: " + collision.gameObject.name);
-        TryHitEnemy(collision.transform);
+        TryPushRigidbody(collision.collider);
+        TryHitEnemy(collision.transform.root);
         DestroyFireball();
     }
 
@@ -71,12 +72,32 @@ public class FireBall : MonoBehaviour
         Enemy enemy = root.GetComponent<Enemy>();
         if (enemy == null)
             return;
-        UnityEngine.Debug.Log("Hit enemy");
+        UnityEngine.Debug.Log("Hit enemy for " + damage);
         enemy.TakeDamage(damage);
         enemy.KnockbackFrom(transform, knockbackSpeed, knockbackDuration);
         UnityEngine.Debug.Log("Weapon hit " + enemy.name);
     }
 
+    private void TryPushRigidbody(Collider hitCollider)
+    {
+        UnityEngine.Debug.Log("Trying to push rigidbody");
+        Rigidbody body = hitCollider.attachedRigidbody;
+        if (body == null || body.isKinematic)
+        {
+            UnityEngine.Debug.Log("Trying to push rigidbody but it has no rigidbody or is kinematic");
+            return;
+        }
+
+        Vector3 pushDir = body.worldCenterOfMass - transform.position;
+        pushDir.y = 0f;
+        if (pushDir.sqrMagnitude < 0.0001f)
+        {
+            UnityEngine.Debug.Log("Trying to push rigidbody but push direction is too small");
+            return;
+        }
+        UnityEngine.Debug.Log("Pushing rigidbody");
+        body.AddForce(pushDir.normalized * knockbackSpeed, ForceMode.VelocityChange);
+    }
     // Destroy fireball and its parent
     private void DestroyFireball()
     {
