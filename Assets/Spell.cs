@@ -25,15 +25,15 @@ public class Spell
     public void cast(Transform spellGen, Vector3 direction)
     {
         GameObject spell = UnityEngine.Object.Instantiate(spellPrefabs[0], spellGen.position, spellGen.rotation);
-        FireBall fireball = spell.GetComponent<FireBall>();
-        if (fireball == null)
+        WaterSlash waterSlash = spell.GetComponent<WaterSlash>();
+        if (waterSlash == null)
         {
-            fireball = spell.GetComponentInChildren<FireBall>();
+            waterSlash = spell.GetComponentInChildren<WaterSlash>();
            
         }
-        if (fireball != null)
+        if (waterSlash != null)
         {
-            fireball.SetDirection(direction);
+            waterSlash.SetDirection(direction);
         }
     }
 }
