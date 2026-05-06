@@ -7,13 +7,14 @@ public class WaterSlash : MonoBehaviour
 {
     public float timeout = 2f; // Destroy after 5 seconds
     public float speed = 7.5f; // Speed of the water slash
+    public float rotationSpeed = 360f;
     private float elapsedTime = 0f;
     private Vector3 direction;
     private Rigidbody rb;
     private bool directionSet = false;
     public float damage = 30f; //
-    public float knockbackSpeed = 5f;
-    public float knockbackDuration = 1f;
+    public float knockbackSpeed = 0f;
+    public float knockbackDuration = 0f;
     public GameObject sphere;
 
     // Start is called before the first frame update
@@ -53,16 +54,21 @@ public class WaterSlash : MonoBehaviour
         if (directionSet)
         {
             transform.Translate(direction * speed * Time.deltaTime, Space.World);
+            transform.Rotate(0f, rotationSpeed * Time.deltaTime, 0f, Space.Self);
         }
     }
 
 
     void OnCollisionEnter(Collision collision)
     {
-        UnityEngine.Debug.Log("Fireball collided with: " + collision.gameObject.name);
+        UnityEngine.Debug.Log("WaterSlash collided with: " + collision.gameObject.name);
         TryPushRigidbody(collision.collider);
         TryHitEnemy(collision.transform.root);
-        DestroyFireball();
+        if (collision.gameObject.CompareTag("Wall"))
+        {
+            UnityEngine.Debug.Log("Collided with wall, destroying WaterSlash");
+            DestroyFireball();
+        }
     }
 
     // Try to hit an enemy (similar to Weapon class pattern)
