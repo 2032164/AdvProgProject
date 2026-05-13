@@ -133,7 +133,6 @@ public class Generation : MonoBehaviour
                     branchRotation = rotation+90;
                     rotation -= 90;
                     direction = d1;
-                    //Debug.Log("trying branch" + rotation + currentPos + direction + " branch pos: " + branchPos + " branch dir: " + branchDir + " branches rotation: " + branchRotation + " branches left: " + branchesLeft + "max branches: " + maxNumBranches);
                 }
                 else{
                     i--;
@@ -141,14 +140,19 @@ public class Generation : MonoBehaviour
             }
 
             //start of random decor elements
-            if(Random.Range(0f,1f) < .5f){
+            if((Random.Range(0f,1f) < .5f)){
                 decorPositions.Add(currentPos);
             }
         }
+
         Instantiate(rooms[5], currentPos, Quaternion.Euler(0, rotation, 0),root);//makes end room
-        surface.BuildNavMesh();
+        GameObject chest = decor[decor.Length-1];
+        Instantiate(chest, addRandomOffset(currentPos), Quaternion.Euler(0, rotation, 0), root);
+        
+        surface.BuildNavMesh();//If you move this behind decor gen, the enemies will avoid the decor unless moved by player 
+
         foreach(Vector3 decorPos in decorPositions){
-            int decorRand = Random.Range(0, decor.Length);
+            int decorRand = Random.Range(0, decor.Length-1);
             GameObject decorTemp = decor[decorRand];
             Instantiate(decorTemp, addRandomOffset(decorPos), randomRotation(), root);
         }
