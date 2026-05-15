@@ -73,6 +73,9 @@ MonoBehaviour:
   topGem: {fileID: 5773456224190934402}
   bottomGem: {fileID: 4560311861602187815}
   spellPrefabs:
+  - {fileID: 4001117318287470044, guid: e2fcf6dcdf702194facaed7f67bf20bb, type: 3}
+  - {fileID: 4001117318287470044, guid: e2fcf6dcdf702194facaed7f67bf20bb, type: 3}
+  - {fileID: 3015038475967746628, guid: 4ec7120bf38690e4b87dd6db4ffb2533, type: 3}
   - {fileID: 3015038475967746628, guid: 4ec7120bf38690e4b87dd6db4ffb2533, type: 3}
 --- !u!1 &8178600602917302504
 GameObject:

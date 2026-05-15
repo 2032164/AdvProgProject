@@ -21,9 +21,27 @@ public class Staff : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(Input.GetMouseButtonDown(0))
+        if (Input.GetMouseButtonDown(0))
         {
-            spell.cast(spellGen, GameObject.FindWithTag("MainCamera").transform.forward);
+            if (spell == null)
+            {
+                Debug.LogWarning("No spell assigned on Staff.");
+                return;
+            }
+            if (spellGen == null)
+            {
+                Debug.LogWarning("spellGen not assigned on Staff.");
+                return;
+            }
+
+            Transform camTransform = Camera.main != null ? Camera.main.transform : GameObject.FindWithTag("MainCamera")?.transform;
+            if (camTransform == null)
+            {
+                Debug.LogWarning("No camera found to determine cast direction.");
+                return;
+            }
+
+            spell.cast(spellGen, camTransform.forward);
         }
     }
 

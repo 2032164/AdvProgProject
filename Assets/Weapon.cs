@@ -12,7 +12,9 @@ public class Weapon : MonoBehaviour
     [SerializeField] private Animator anim;
     [SerializeField] private string attackTriggerName = "Attack";
     [SerializeField] private bool forceTrigger = false;
+    [SerializeField] private Transform unequippedParent;
     public Sprite weaponIcon;
+    private bool started = false;
     private GameObject thisWeapon;
 
     void Start()
@@ -83,13 +85,42 @@ public class Weapon : MonoBehaviour
 
     public void Equip(Transform root)
     {
-        thisWeapon = Instantiate(this.gameObject, root);
-        transform.SetParent(root);
+        if (root == null)
+        {
+            UnityEngine.Debug.LogWarning("Equip called with null root.");
+            return;
+        }
+
+        if(!started){
+            thisWeapon = Instantiate(this.gameObject, root);
+            thisWeapon.transform.SetParent(root, false);
+            thisWeapon.SetActive(true);
+            started = true;
+        }
+        else{
+            if (thisWeapon == null)
+            {
+                thisWeapon = Instantiate(this.gameObject, root);
+            }
+
+            thisWeapon.transform.SetParent(root, false);
+            thisWeapon.SetActive(true);
+        }
     }
 
     public void Unequip()
     {
-        Destroy(thisWeapon);
+        if (!started || thisWeapon == null)
+        {
+            return;
+        }
+
+        if (unequippedParent != null)
+        {
+            thisWeapon.transform.SetParent(unequippedParent, false);
+        }
+
+        thisWeapon.SetActive(false);
     }
 
     bool AnimatorIsPlaying(){

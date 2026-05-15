@@ -1408,8 +1408,8 @@ MonoBehaviour:
   - {fileID: 2017145363860909662, guid: eb573edc2d47aae41ad121d9f2251a57, type: 3}
   - {fileID: 5415639311186551661, guid: 18aef69c708213e47963f57f660d2482, type: 3}
   - {fileID: 8279604510865165024, guid: eb2ee41822e9b85429320f5da54f3b6c, type: 3}
-  numRooms: 30
-  maxNumBranches: 3
+  numRooms: 50
+  maxNumBranches: 5
   root: {fileID: 1947602757}
   surface: {fileID: 1134441894}
   player: {fileID: 281601955}

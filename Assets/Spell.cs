@@ -7,6 +7,7 @@ public class Spell
     private Color[] rarityColors = {Color.grey,Color.green,Color.blue,Color.magenta,new Color(1f, 0.647f, 0f)};//each will correspond to a different spell type and top gem color [grey,green,blue,purple,orange]
     public Color spellType;//each will correspond to a different spell effect and bottom gem color
     private Color[] typeColors = {Color.red,new Color(0.4f, 0.2f, 0.1f), new Color(0f, 0.5f, 0.5f),Color.grey};//fire,earth,water,wind?
+    private int spellTypeIndex = 0;
 
     public double cooldown = .5;
     private double lastCastTime = -9999;
@@ -19,21 +20,37 @@ public class Spell
         this.rarity = rarityColors[rarity];
         multiplier = 1 + (rarity * 0.1f );
         this.spellType = typeColors[spellType];
+        this.spellTypeIndex = spellType;
         this.spellPrefabs = spellPrefabs;
     }
 
     public void cast(Transform spellGen, Vector3 direction)
     {
-        GameObject spell = UnityEngine.Object.Instantiate(spellPrefabs[0], spellGen.position, spellGen.rotation);
-        WaterSlash waterSlash = spell.GetComponent<WaterSlash>();
-        if (waterSlash == null)
+        if (spellPrefabs == null || spellPrefabs.Length == 0)
         {
-            waterSlash = spell.GetComponentInChildren<WaterSlash>();
-           
+            UnityEngine.Debug.LogWarning("No spell prefabs assigned to Spell.");
+            return;
         }
-        if (waterSlash != null)
+
+        int index = Mathf.Clamp(spellTypeIndex, 0, spellPrefabs.Length - 1);
+        GameObject spell = UnityEngine.Object.Instantiate(spellPrefabs[index], spellGen.position, spellGen.rotation);
+
+        FireBall fire = spell.GetComponent<FireBall>();
+        if (fire == null) fire = spell.GetComponentInChildren<FireBall>();
+        if (fire != null)
         {
-            waterSlash.SetDirection(direction);
+            fire.SetDirection(direction);
+            return;
         }
+
+        WaterSlash water = spell.GetComponent<WaterSlash>();
+        if (water == null) water = spell.GetComponentInChildren<WaterSlash>();
+        if (water != null)
+        {
+            water.SetDirection(direction);
+            return;
+        }
+
+        UnityEngine.Debug.LogWarning("Spawned spell prefab has no FireBall or WaterSlash component to set direction.");
     }
 }
