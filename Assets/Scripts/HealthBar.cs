@@ -16,7 +16,11 @@ public class HealthBar : MonoBehaviour
     [SerializeField]
     private float healAmount = 10f;
 
+    [SerializeField]
+    private float campfireHealAmount = 20f;
+
     private FPSController fpsController;
+    private bool isInCampfire = false;
     private float previousHealth;
     private float lastDamageTime;
 
@@ -33,6 +37,12 @@ public class HealthBar : MonoBehaviour
         healthBarFill.fillAmount = Mathf.Clamp01(previousHealth / maxHealth);
     }
 
+    public void SetCampfireHealing(bool active)
+    {
+        isInCampfire = active;
+        UnityEngine.Debug.Log("Campfire healing set to: " + active);
+    }
+
     // Update is called once per frame
     void Update()
     {
@@ -43,14 +53,14 @@ public class HealthBar : MonoBehaviour
             lastDamageTime = Time.time;
         }
 
+        float activeHealAmount = isInCampfire ? campfireHealAmount : healAmount;
         bool cooldownComplete = Time.time - lastDamageTime >= healDelay;
-        if (cooldownComplete && currentHealth < maxHealth)
+        
+        if ((isInCampfire || cooldownComplete) && currentHealth < maxHealth)
         {
-            fpsController.health = Mathf.Min(maxHealth, fpsController.health + (healAmount * Time.deltaTime));
+            UnityEngine.Debug.Log("Healing player faster "+ isInCampfire);
+            fpsController.health = Mathf.Min(maxHealth, fpsController.health + (activeHealAmount * Time.deltaTime));
             currentHealth = fpsController.health;
-        }
-        else
-        {
         }
         healthBarFill.fillAmount = Mathf.Clamp01(currentHealth / maxHealth);
         previousHealth = currentHealth;

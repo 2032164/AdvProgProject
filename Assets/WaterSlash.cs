@@ -27,7 +27,7 @@ public class WaterSlash : MonoBehaviour
         }
     }
 
-    // Set the direction for the fireball to travel
+    // Set the direction for the water slash to travel
     public void SetDirection(Vector3 newDirection)
     {
         direction = newDirection.normalized;
@@ -47,10 +47,10 @@ public class WaterSlash : MonoBehaviour
         elapsedTime += Time.deltaTime;
         if (elapsedTime >= timeout)
         {
-            DestroyFireball();
+            DestroyWaterSlash();
         }
         
-        // Move the fireball forward
+        // Move the water slash forward
         if (directionSet)
         {
             transform.Translate(direction * speed * Time.deltaTime, Space.World);
@@ -67,7 +67,7 @@ public class WaterSlash : MonoBehaviour
         if (collision.gameObject.CompareTag("Wall"))
         {
             UnityEngine.Debug.Log("Collided with wall, destroying WaterSlash");
-            DestroyFireball();
+            DestroyWaterSlash();
         }
     }
 
@@ -104,10 +104,10 @@ public class WaterSlash : MonoBehaviour
         UnityEngine.Debug.Log("Pushing rigidbody");
         body.AddForce(pushDir.normalized * knockbackSpeed, ForceMode.VelocityChange);
     }
-    // Destroy fireball and its parent
-    private void DestroyFireball()
+    // Destroy water slash and its parent
+    private void DestroyWaterSlash()
     {
-        UnityEngine.Debug.Log("Destroying fireball");
+        UnityEngine.Debug.Log("Destroying WaterSlash");
         if (transform.parent != null)
         {
             Destroy(transform.parent.gameObject);

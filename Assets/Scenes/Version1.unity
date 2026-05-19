@@ -328,6 +328,7 @@ MonoBehaviour:
   lookSpeed: 2
   lookXLimit: 45
   health: 100
+  healthBar: {fileID: 1860027886}
   hotbar: {fileID: 1860027892}
   canMove: 1
 --- !u!143 &281601957
@@ -1341,6 +1342,7 @@ MonoBehaviour:
   player: {fileID: 281601954}
   healDelay: 3
   healAmount: 10
+  campfireHealAmount: 20
   healthBarFill: {fileID: 1280595587}
 --- !u!114 &1860027892
 MonoBehaviour:

@@ -18,6 +18,7 @@ public class FPSController : MonoBehaviour
     public float lookXLimit = 45f;
 
     public float health = 100f;
+    public GameObject healthBar;
     public HotBar hotbar;
 
 
@@ -105,8 +106,4 @@ public class FPSController : MonoBehaviour
     public float getHealth(){
         return (float)health;
     }
-
-    
-
-
 }

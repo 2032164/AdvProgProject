@@ -51,6 +51,14 @@ public class Spell
             return;
         }
 
-        UnityEngine.Debug.LogWarning("Spawned spell prefab has no FireBall or WaterSlash component to set direction.");
+        RockSmash rock = spell.GetComponent<RockSmash>();
+        if (rock == null) rock = spell.GetComponentInChildren<RockSmash>();
+        if (rock != null)
+        {
+            rock.SetDirection(direction);
+            return;
+        }
+
+        UnityEngine.Debug.LogWarning("Spawned spell prefab has no FireBall, WaterSlash, or RockSmash component to set direction.");
     }
 }
