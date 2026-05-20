@@ -25,8 +25,9 @@ public class Generation : MonoBehaviour
     private Vector3 currentPos;
     private int rotation;
     private string direction;
-    private Vector3[] pastPositions;
+    private List<Vector3> pastPositions;
     private GameObject temp;
+    private Dictionary<Vector3, RoomController> roomMap;
 
     //every left turn = -90 deg of rotation and switches to moving on z axis
     //every right turn = +90 deg of rotation and switches to moving on -z axis
@@ -43,14 +44,22 @@ public class Generation : MonoBehaviour
         int branchesLeft = 0;
         int branchRotation = 0;
         GameObject temp = null;
-        pastPositions = new Vector3[numRooms+1];
-        Instantiate(rooms[0], currentPos, Quaternion.identity,root);//makes start room
-        pastPositions[0] = currentPos;
+        pastPositions = new List<Vector3>();
+        roomMap = new Dictionary<Vector3, RoomController>();
+        GameObject startRoom = Instantiate(rooms[0], currentPos, Quaternion.identity,root);//makes start room
+        RoomController startRC = startRoom.GetComponent<RoomController>();
+        if (startRC != null) {
+            roomMap[currentPos] = startRC;
+            Debug.Log($"[Generation] Start room created at {currentPos} with RoomController");
+        } else {
+            Debug.LogWarning($"[Generation] Start room at {currentPos} has NO RoomController component!");
+        }
+        pastPositions.Add(currentPos);
         direction = "posx";
         currentPos.x+=10;
         for(int i = 1; i < numRooms-2; i++){
             int rand;
-            pastPositions[i] = currentPos;//this has to be here bc or else it only records the position after the room is made aka the next position sothin in he dont work
+            // record positions only after a room is actually instantiated (see below)
             if(maxNumBranches > 0 && !branching){
                 rand = Random.Range(1, rooms.Length-1);
             }
@@ -67,7 +76,10 @@ public class Generation : MonoBehaviour
             {
                 //Debug.Log("Done with branch, returning to main path. Current pos: " + currentPos + " branch pos: " + branchPos + " branch dir: " + branchDir + " direction: " + direction);
                 branching = false;
-                Instantiate(rooms[5], currentPos, Quaternion.Euler(0, rotation, 0),root);
+                GameObject roomObj = Instantiate(rooms[5], currentPos, Quaternion.Euler(0, rotation, 0),root);
+                RoomController rc = roomObj.GetComponent<RoomController>();
+                if (rc != null) roomMap[currentPos] = rc;
+                pastPositions.Add(currentPos);
                 direction = branchDir;
                 currentPos = branchPos;
                 rotation = branchRotation;
@@ -78,9 +90,13 @@ public class Generation : MonoBehaviour
             if (rand == 1){//straight
                 if(checkNextPos(currentPos, direction))
                 {
-                    Room room = Instantiate(temp, currentPos, Quaternion.Euler(0, rotation, 0),root).GetComponent<Room>();
+                    GameObject roomObj = Instantiate(temp, currentPos, Quaternion.Euler(0, rotation, 0),root);
+                    Room room = roomObj.GetComponent<Room>();
+                    RoomController rc = roomObj.GetComponent<RoomController>();
+                    if (rc != null) roomMap[currentPos] = rc;
                     room.player = this.player;
                     room.playerBody = this.playerBody;
+                    pastPositions.Add(currentPos);
                     currentPos = newPos(currentPos, direction);
                 }
                 else{
@@ -93,7 +109,10 @@ public class Generation : MonoBehaviour
 
                 if(checkNextPos(currentPos, tempDirection)){
                     //Debug.Log("left turn" + currentPos + direction);
-                    Instantiate(temp, currentPos, Quaternion.Euler(0, rotation, 0),root);
+                    GameObject roomObj = Instantiate(temp, currentPos, Quaternion.Euler(0, rotation, 0),root);
+                    RoomController rc = roomObj.GetComponent<RoomController>();
+                    if (rc != null) roomMap[currentPos] = rc;
+                    pastPositions.Add(currentPos);
                     rotation -= 90;
                     direction = tempDirection;
                     currentPos = newPos(currentPos, direction);
@@ -108,7 +127,10 @@ public class Generation : MonoBehaviour
                 string tempDirection = rightTurn(direction);
                 if(checkNextPos(currentPos, tempDirection)){
                 //Debug.Log("right turn" + currentPos + direction);
-                    Instantiate(temp, currentPos, Quaternion.Euler(0, rotation, 0),root);
+                    GameObject roomObj = Instantiate(temp, currentPos, Quaternion.Euler(0, rotation, 0),root);
+                    RoomController rc = roomObj.GetComponent<RoomController>();
+                    if (rc != null) roomMap[currentPos] = rc;
+                    pastPositions.Add(currentPos);
                     rotation += 90;
                     direction = tempDirection;
                     currentPos = newPos(currentPos, direction);
@@ -123,7 +145,10 @@ public class Generation : MonoBehaviour
                 string d2 = rightTurn(direction);
                 if(checkNextPos(currentPos, d1) && checkNextPos(currentPos, d2)){//not cjhecking right
                     //Debug.Log("branch" + currentPos + direction);
-                    Instantiate(temp, currentPos, Quaternion.Euler(0, rotation, 0),root);
+                    GameObject roomObj = Instantiate(temp, currentPos, Quaternion.Euler(0, rotation, 0),root);
+                    RoomController rc = roomObj.GetComponent<RoomController>();
+                    if (rc != null) roomMap[currentPos] = rc;
+                    pastPositions.Add(currentPos);
                     maxNumBranches-=1;
                     branching = true;
                     branchPos = newPos(currentPos,d2);
@@ -145,7 +170,10 @@ public class Generation : MonoBehaviour
             }
         }
 
-        Instantiate(rooms[5], currentPos, Quaternion.Euler(0, rotation, 0),root);//makes end room
+        GameObject endRoom = Instantiate(rooms[5], currentPos, Quaternion.Euler(0, rotation, 0),root);//makes end room
+        RoomController endRC = endRoom.GetComponent<RoomController>();
+        if (endRC != null) roomMap[currentPos] = endRC;
+        pastPositions.Add(currentPos);
         GameObject chest = decor[decor.Length-1];
         Instantiate(chest, addRandomOffset(currentPos), Quaternion.Euler(0, rotation, 0), root);
         
@@ -156,6 +184,64 @@ public class Generation : MonoBehaviour
             GameObject decorTemp = decor[decorRand];
             Instantiate(decorTemp, addRandomOffset(decorPos), randomRotation(), root);
         }
+
+        // Connect adjacent rooms
+        ConnectAdjacentRooms();
+
+        // Disable all rooms initially (culling)
+        foreach (var room in roomMap.Values)
+        {
+            if (room != null)
+            {
+                room.SetRoomActive(false);
+                Debug.Log($"[Generation] Initially disabling room: {room.gameObject.name}");
+            }
+        }
+        Debug.Log($"[Generation] All rooms disabled. Waiting for player to enter first room...");
+    }
+
+    private void ConnectAdjacentRooms()
+    {
+        Debug.Log($"[Generation] ConnectAdjacentRooms() called with {roomMap.Count} rooms in map");
+        int connectionCount = 0;
+
+        // Check all rooms and link adjacent ones
+        foreach (var pos in roomMap.Keys)
+        {
+            RoomController room = roomMap[pos];
+            if (room == null) {
+                Debug.LogWarning($"[Generation] Room at {pos} is null in roomMap!");
+                continue;
+            }
+            if (room.connectedRooms == null) {
+                Debug.LogWarning($"[Generation] Room at {pos} has null connectedRooms list!");
+                continue;
+            }
+
+            // Check all 4 directions (±10 on x, ±10 on z)
+            Vector3[] adjacentPositions = new Vector3[]
+            {
+                pos + new Vector3(10, 0, 0),  // +X
+                pos - new Vector3(10, 0, 0),  // -X
+                pos + new Vector3(0, 0, 10),  // +Z
+                pos - new Vector3(0, 0, 10)   // -Z
+            };
+
+            foreach (var adjPos in adjacentPositions)
+            {
+                if (roomMap.ContainsKey(adjPos))
+                {
+                    RoomController adjRoom = roomMap[adjPos];
+                    if (adjRoom != null && !room.connectedRooms.Contains(adjRoom))
+                    {
+                        room.connectedRooms.Add(adjRoom);
+                        connectionCount++;
+                        Debug.Log($"[Generation] Connected room at {pos} to room at {adjPos}");
+                    }
+                }
+            }
+        }
+        Debug.Log($"[Generation] ConnectAdjacentRooms() complete. Total connections made: {connectionCount}");
     }
 
      private Vector3 newPos(Vector3 currentPos, string direction)
@@ -183,9 +269,9 @@ public class Generation : MonoBehaviour
     {
         pos = newPos(pos, direction);
         //finds the next position and checks if it has a room already, if it does then it returns false
-        for (int i = 0; i < pastPositions.Length; i++)
+        for (int i = 0; i < pastPositions.Count; i++)
         {
-            if (pastPositions[i] == pos)//idk if this works
+            if (pastPositions[i] == pos)
             {
                 return false;
             }

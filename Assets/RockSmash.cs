@@ -7,7 +7,6 @@ public class RockSmash : MonoBehaviour
 {
     public float timeout = 2f; // Destroy after 5 seconds
     public float speed = 7.5f; // Speed of the rock smash
-    public float rotationSpeed = 360f;
     private float elapsedTime = 0f;
     private Vector3 direction;
     private Rigidbody rb;
@@ -54,7 +53,6 @@ public class RockSmash : MonoBehaviour
         if (directionSet)
         {
             transform.Translate(direction * speed * Time.deltaTime, Space.World);
-            transform.Rotate(0f, rotationSpeed * Time.deltaTime, 0f, Space.Self);
         }
     }
 

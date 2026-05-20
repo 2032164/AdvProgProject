@@ -52,11 +52,9 @@ public class Weapon : MonoBehaviour
 
     private void TryPushRigidbody(Collider hitCollider)
     {
-        UnityEngine.Debug.Log("Trying to push rigidbody");
         Rigidbody body = hitCollider.attachedRigidbody;
         if (body == null || body.isKinematic)
         {
-            UnityEngine.Debug.Log("Trying to push rigidbody but it has no rigidbody or is kinematic");
             return;
         }
 
@@ -64,30 +62,24 @@ public class Weapon : MonoBehaviour
         pushDir.y = 0f;
         if (pushDir.sqrMagnitude < 0.0001f)
         {
-            UnityEngine.Debug.Log("Trying to push rigidbody but push direction is too small");
             return;
         }
-        UnityEngine.Debug.Log("Pushing rigidbody");
         body.AddForce(pushDir.normalized * collisionPushSpeed, ForceMode.VelocityChange);
     }
 
     private void TryHitEnemy(Transform root)
     {
-        UnityEngine.Debug.Log("Trying to hit enemy");
         Enemy enemy = root.GetComponent<Enemy>();
         if (enemy == null)
             return;
-        UnityEngine.Debug.Log("Hit enemy");
         enemy.TakeDamage(damage);
         enemy.KnockbackFrom(transform, knockbackSpeed, knockbackDuration);
-        UnityEngine.Debug.Log("Weapon hit " + enemy.name);
     }
 
     public void Equip(Transform root)
     {
         if (root == null)
         {
-            UnityEngine.Debug.LogWarning("Equip called with null root.");
             return;
         }
 
