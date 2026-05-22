@@ -11,8 +11,11 @@ public class RoomController : MonoBehaviour
 
     private void Awake()
     {
+        if (connectedRooms == null)
+        {
+            connectedRooms = new List<RoomController>();
+        }
         renderers = GetComponentsInChildren<Renderer>(true); // include inactive
-        Debug.Log($"[RoomController] Awake on {gameObject.name}: Found {renderers.Length} renderers");
         if (!AllRooms.Contains(this))
         {
             AllRooms.Add(this);
@@ -27,21 +30,14 @@ public class RoomController : MonoBehaviour
     // Enable/disable rendering for this room
     public void SetRoomActive(bool active)
     {
-        Debug.Log($"[RoomController] SetRoomActive({active}) on {gameObject.name} - {renderers?.Length ?? 0} renderers");
         if (renderers == null) {
-            Debug.LogWarning($"[RoomController] renderers is null on {gameObject.name}!");
             return;
         }
-        int disabledCount = 0;
         foreach (var r in renderers)
         {
             if (r != null) {
                 r.enabled = active;
-                if (!active) disabledCount++;
             }
-        }
-        if (!active) {
-            Debug.Log($"[RoomController] DISABLED {disabledCount} renderers on {gameObject.name}");
         }
     }
 }

@@ -1,12 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Numerics;
 using UnityEngine;
 using Unity.AI.Navigation;
 using Vector3 = UnityEngine.Vector3;
 using Quaternion = UnityEngine.Quaternion;
-using Debug = UnityEngine.Debug;
 using System.Runtime.InteropServices;
 
 public class Generation : MonoBehaviour
@@ -15,6 +13,8 @@ public class Generation : MonoBehaviour
     //offset is 10?
     public GameObject[] rooms;//1= start, 2= straight, 3= left turn, 4 = right turn, 5 = branch, 6 = end
     public GameObject[] decor;
+    public int campfireDecorIndex = 3;
+    public int campfireSpawnLimit = 1;
     public int numRooms = 10;
     public int maxNumBranches = 1;
     public Transform root;
@@ -23,6 +23,10 @@ public class Generation : MonoBehaviour
     public GameObject playerBody;
 
     private Vector3 currentPos;
+    private Vector3 lastPlacedPos;
+    private Vector3 branchJunctionPos;
+    private bool waitingForBranchSecondStart;
+    private int campfireSpawnCount;
     private int rotation;
     private string direction;
     private List<Vector3> pastPositions;
@@ -44,16 +48,15 @@ public class Generation : MonoBehaviour
         int branchesLeft = 0;
         int branchRotation = 0;
         GameObject temp = null;
+        campfireSpawnCount = 0;
         pastPositions = new List<Vector3>();
         roomMap = new Dictionary<Vector3, RoomController>();
         GameObject startRoom = Instantiate(rooms[0], currentPos, Quaternion.identity,root);//makes start room
         RoomController startRC = startRoom.GetComponent<RoomController>();
         if (startRC != null) {
             roomMap[currentPos] = startRC;
-            Debug.Log($"[Generation] Start room created at {currentPos} with RoomController");
-        } else {
-            Debug.LogWarning($"[Generation] Start room at {currentPos} has NO RoomController component!");
         }
+        lastPlacedPos = currentPos;
         pastPositions.Add(currentPos);
         direction = "posx";
         currentPos.x+=10;
@@ -78,11 +81,17 @@ public class Generation : MonoBehaviour
                 branching = false;
                 GameObject roomObj = Instantiate(rooms[5], currentPos, Quaternion.Euler(0, rotation, 0),root);
                 RoomController rc = roomObj.GetComponent<RoomController>();
-                if (rc != null) roomMap[currentPos] = rc;
+                if (rc != null)
+                {
+                    roomMap[currentPos] = rc;
+                    ConnectRooms(lastPlacedPos, currentPos);
+                }
                 pastPositions.Add(currentPos);
+                lastPlacedPos = currentPos;
                 direction = branchDir;
                 currentPos = branchPos;
                 rotation = branchRotation;
+                waitingForBranchSecondStart = true;
                 //can't do this bc it overwrites an position in past positions, need to find a way to not overwrite positions in past positions when branching
             }
             
@@ -93,10 +102,20 @@ public class Generation : MonoBehaviour
                     GameObject roomObj = Instantiate(temp, currentPos, Quaternion.Euler(0, rotation, 0),root);
                     Room room = roomObj.GetComponent<Room>();
                     RoomController rc = roomObj.GetComponent<RoomController>();
-                    if (rc != null) roomMap[currentPos] = rc;
+                    if (rc != null)
+                    {
+                        roomMap[currentPos] = rc;
+                        ConnectRooms(lastPlacedPos, currentPos);
+                        if (waitingForBranchSecondStart)
+                        {
+                            ConnectRooms(branchJunctionPos, currentPos);
+                            waitingForBranchSecondStart = false;
+                        }
+                    }
                     room.player = this.player;
                     room.playerBody = this.playerBody;
                     pastPositions.Add(currentPos);
+                    lastPlacedPos = currentPos;
                     currentPos = newPos(currentPos, direction);
                 }
                 else{
@@ -111,8 +130,18 @@ public class Generation : MonoBehaviour
                     //Debug.Log("left turn" + currentPos + direction);
                     GameObject roomObj = Instantiate(temp, currentPos, Quaternion.Euler(0, rotation, 0),root);
                     RoomController rc = roomObj.GetComponent<RoomController>();
-                    if (rc != null) roomMap[currentPos] = rc;
+                    if (rc != null)
+                    {
+                        roomMap[currentPos] = rc;
+                        ConnectRooms(lastPlacedPos, currentPos);
+                        if (waitingForBranchSecondStart)
+                        {
+                            ConnectRooms(branchJunctionPos, currentPos);
+                            waitingForBranchSecondStart = false;
+                        }
+                    }
                     pastPositions.Add(currentPos);
+                    lastPlacedPos = currentPos;
                     rotation -= 90;
                     direction = tempDirection;
                     currentPos = newPos(currentPos, direction);
@@ -129,8 +158,18 @@ public class Generation : MonoBehaviour
                 //Debug.Log("right turn" + currentPos + direction);
                     GameObject roomObj = Instantiate(temp, currentPos, Quaternion.Euler(0, rotation, 0),root);
                     RoomController rc = roomObj.GetComponent<RoomController>();
-                    if (rc != null) roomMap[currentPos] = rc;
+                    if (rc != null)
+                    {
+                        roomMap[currentPos] = rc;
+                        ConnectRooms(lastPlacedPos, currentPos);
+                        if (waitingForBranchSecondStart)
+                        {
+                            ConnectRooms(branchJunctionPos, currentPos);
+                            waitingForBranchSecondStart = false;
+                        }
+                    }
                     pastPositions.Add(currentPos);
+                    lastPlacedPos = currentPos;
                     rotation += 90;
                     direction = tempDirection;
                     currentPos = newPos(currentPos, direction);
@@ -147,8 +186,14 @@ public class Generation : MonoBehaviour
                     //Debug.Log("branch" + currentPos + direction);
                     GameObject roomObj = Instantiate(temp, currentPos, Quaternion.Euler(0, rotation, 0),root);
                     RoomController rc = roomObj.GetComponent<RoomController>();
-                    if (rc != null) roomMap[currentPos] = rc;
+                    if (rc != null)
+                    {
+                        roomMap[currentPos] = rc;
+                        ConnectRooms(lastPlacedPos, currentPos);
+                    }
                     pastPositions.Add(currentPos);
+                    lastPlacedPos = currentPos;
+                    branchJunctionPos = currentPos;
                     maxNumBranches-=1;
                     branching = true;
                     branchPos = newPos(currentPos,d2);
@@ -172,7 +217,16 @@ public class Generation : MonoBehaviour
 
         GameObject endRoom = Instantiate(rooms[5], currentPos, Quaternion.Euler(0, rotation, 0),root);//makes end room
         RoomController endRC = endRoom.GetComponent<RoomController>();
-        if (endRC != null) roomMap[currentPos] = endRC;
+        if (endRC != null)
+        {
+            roomMap[currentPos] = endRC;
+            ConnectRooms(lastPlacedPos, currentPos);
+            if (waitingForBranchSecondStart)
+            {
+                ConnectRooms(branchJunctionPos, currentPos);
+                waitingForBranchSecondStart = false;
+            }
+        }
         pastPositions.Add(currentPos);
         GameObject chest = decor[decor.Length-1];
         Instantiate(chest, addRandomOffset(currentPos), Quaternion.Euler(0, rotation, 0), root);
@@ -180,13 +234,9 @@ public class Generation : MonoBehaviour
         surface.BuildNavMesh();//If you move this behind decor gen, the enemies will avoid the decor unless moved by player 
 
         foreach(Vector3 decorPos in decorPositions){
-            int decorRand = Random.Range(0, decor.Length-1);
-            GameObject decorTemp = decor[decorRand];
+            GameObject decorTemp = GetRandomDecorPrefab();
             Instantiate(decorTemp, addRandomOffset(decorPos), randomRotation(), root);
         }
-
-        // Connect adjacent rooms
-        ConnectAdjacentRooms();
 
         // Disable all rooms initially (culling)
         foreach (var room in roomMap.Values)
@@ -194,54 +244,61 @@ public class Generation : MonoBehaviour
             if (room != null)
             {
                 room.SetRoomActive(false);
-                Debug.Log($"[Generation] Initially disabling room: {room.gameObject.name}");
             }
         }
-        Debug.Log($"[Generation] All rooms disabled. Waiting for player to enter first room...");
     }
 
-    private void ConnectAdjacentRooms()
+    private void ConnectRooms(Vector3 fromPos, Vector3 toPos)
     {
-        Debug.Log($"[Generation] ConnectAdjacentRooms() called with {roomMap.Count} rooms in map");
-        int connectionCount = 0;
-
-        // Check all rooms and link adjacent ones
-        foreach (var pos in roomMap.Keys)
+        if (!roomMap.TryGetValue(fromPos, out RoomController fromRoom) || fromRoom == null)
         {
-            RoomController room = roomMap[pos];
-            if (room == null) {
-                Debug.LogWarning($"[Generation] Room at {pos} is null in roomMap!");
-                continue;
-            }
-            if (room.connectedRooms == null) {
-                Debug.LogWarning($"[Generation] Room at {pos} has null connectedRooms list!");
-                continue;
-            }
-
-            // Check all 4 directions (±10 on x, ±10 on z)
-            Vector3[] adjacentPositions = new Vector3[]
-            {
-                pos + new Vector3(10, 0, 0),  // +X
-                pos - new Vector3(10, 0, 0),  // -X
-                pos + new Vector3(0, 0, 10),  // +Z
-                pos - new Vector3(0, 0, 10)   // -Z
-            };
-
-            foreach (var adjPos in adjacentPositions)
-            {
-                if (roomMap.ContainsKey(adjPos))
-                {
-                    RoomController adjRoom = roomMap[adjPos];
-                    if (adjRoom != null && !room.connectedRooms.Contains(adjRoom))
-                    {
-                        room.connectedRooms.Add(adjRoom);
-                        connectionCount++;
-                        Debug.Log($"[Generation] Connected room at {pos} to room at {adjPos}");
-                    }
-                }
-            }
+            return;
         }
-        Debug.Log($"[Generation] ConnectAdjacentRooms() complete. Total connections made: {connectionCount}");
+
+        if (!roomMap.TryGetValue(toPos, out RoomController toRoom) || toRoom == null)
+        {
+            return;
+        }
+
+        if (!fromRoom.connectedRooms.Contains(toRoom))
+        {
+            fromRoom.connectedRooms.Add(toRoom);
+        }
+
+        if (!toRoom.connectedRooms.Contains(fromRoom))
+        {
+            toRoom.connectedRooms.Add(fromRoom);
+        }
+    }
+
+    private GameObject GetRandomDecorPrefab()
+    {
+        if (decor == null || decor.Length == 0)
+        {
+            return null;
+        }
+
+        int safety = 0;
+        while (safety < 20)
+        {
+            safety++;
+            int decorRand = Random.Range(0, decor.Length - 1);
+            GameObject decorTemp = decor[decorRand];
+
+            if (campfireDecorIndex >= 0 && campfireDecorIndex < decor.Length && decorTemp == decor[campfireDecorIndex])
+            {
+                if (campfireSpawnCount >= campfireSpawnLimit)
+                {
+                    continue;
+                }
+
+                campfireSpawnCount++;
+            }
+
+            return decorTemp;
+        }
+
+        return decor[0];
     }
 
      private Vector3 newPos(Vector3 currentPos, string direction)
