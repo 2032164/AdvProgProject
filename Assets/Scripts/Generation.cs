@@ -229,13 +229,14 @@ public class Generation : MonoBehaviour
         }
         pastPositions.Add(currentPos);
         GameObject chest = decor[decor.Length-1];
-        Instantiate(chest, addRandomOffset(currentPos), Quaternion.Euler(0, rotation, 0), root);
+        Instantiate(chest, addRandomOffset(currentPos), Quaternion.Euler(0, rotation, 0), endRoom.transform);
         
         surface.BuildNavMesh();//If you move this behind decor gen, the enemies will avoid the decor unless moved by player 
 
         foreach(Vector3 decorPos in decorPositions){
             GameObject decorTemp = GetRandomDecorPrefab();
-            Instantiate(decorTemp, addRandomOffset(decorPos), randomRotation(), root);
+            Transform roomParent = GetRoomTransformAtPosition(decorPos);
+            Instantiate(decorTemp, addRandomOffset(decorPos), randomRotation(),roomParent);
         }
 
         // Disable all rooms initially (culling)
@@ -378,6 +379,16 @@ public class Generation : MonoBehaviour
         float zOffset = randomOutsideCenter(-3f, 3f, -1f, 1f);
         
         return new Vector3(pos.x + xOffset, pos.y, pos.z + zOffset);
+    }
+
+    private Transform GetRoomTransformAtPosition(Vector3 pos)
+    {
+        if (roomMap.TryGetValue(pos, out RoomController roomController) && roomController != null)
+        {
+            return roomController.transform;
+        }
+
+        return null;
     }
 
     private float randomOutsideCenter(float min, float max, float blockedMin, float blockedMax)
