@@ -79,7 +79,7 @@ public class Generation : MonoBehaviour
             {
                 //Debug.Log("Done with branch, returning to main path. Current pos: " + currentPos + " branch pos: " + branchPos + " branch dir: " + branchDir + " direction: " + direction);
                 branching = false;
-                GameObject roomObj = Instantiate(rooms[5], currentPos, Quaternion.Euler(0, rotation, 0),root);
+                GameObject roomObj = Instantiate(rooms[4], currentPos, Quaternion.Euler(0, rotation, 0),root);
                 RoomController rc = roomObj.GetComponent<RoomController>();
                 if (rc != null)
                 {
@@ -221,11 +221,8 @@ public class Generation : MonoBehaviour
         {
             roomMap[currentPos] = endRC;
             ConnectRooms(lastPlacedPos, currentPos);
-            if (waitingForBranchSecondStart)
-            {
-                ConnectRooms(branchJunctionPos, currentPos);
-                waitingForBranchSecondStart = false;
-            }
+            // The final end room should terminate the path, not reconnect back to a branch junction.
+            waitingForBranchSecondStart = false;
         }
         pastPositions.Add(currentPos);
         GameObject chest = decor[decor.Length-1];
