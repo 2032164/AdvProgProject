@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class RockSmash : MonoBehaviour
 {
-    public float timeout = 2f; // Destroy after 5 seconds
+    public float timeout = 2f; // Destroy after this many seconds
     public float speed = 7.5f; // Speed of the rock smash
     private float elapsedTime = 0f;
     private Vector3 direction;

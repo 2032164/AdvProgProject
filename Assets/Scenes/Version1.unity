@@ -393,7 +393,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 12a2ae1fbc1baec4b85e5961c636f811, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  renderDepth: 4
+  renderDepth: 6
 --- !u!1 &285748029
 GameObject:
   m_ObjectHideFlags: 0
@@ -728,7 +728,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 1, y: 1}
-  m_AnchoredPosition: {x: -62.499695, y: -404.99994}
+  m_AnchoredPosition: {x: -62.499634, y: -405}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1159027393
@@ -1427,7 +1427,7 @@ MonoBehaviour:
   - {fileID: 8279604510865165024, guid: eb2ee41822e9b85429320f5da54f3b6c, type: 3}
   campfireDecorIndex: 3
   campfireSpawnLimit: 1
-  numRooms: 100
+  numRooms: 75
   maxNumBranches: 10
   root: {fileID: 1947602757}
   surface: {fileID: 1134441894}
