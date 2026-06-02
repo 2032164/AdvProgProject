@@ -13,24 +13,18 @@ public class HotBar : MonoBehaviour
     public int selectedSlot = 0;
     public Image hotbarSelector;
     private int previousSelectedSlot = -1;
+    private GameObject[] equippedWeapons;
 
     void Start()
     {
+        PopulateHotbarWithRandomWeapons();
         hotbarSelector.transform.position = hotbarSlots[selectedSlot].transform.position;
-        hotbarSlots[0].sprite = items[0].GetComponent<Weapon>().weaponIcon;
-        hotbarSlots[1].sprite = items[1].GetComponent<Weapon>().weaponIcon;
-        hotbarSlots[2].sprite = items[2].GetComponent<Weapon>().weaponIcon;
-        hotbarSlots[3].sprite = items[3].GetComponent<Weapon>().weaponIcon;
+        EquipCurrentSlot();
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(previousSelectedSlot == -1)
-        {
-            items[0].GetComponent<Weapon>().Equip(root);
-            previousSelectedSlot = 0;
-        }
         if(Input.GetKeyDown(KeyCode.Alpha1))
         {
             selectedSlot = 0;
@@ -50,9 +44,8 @@ public class HotBar : MonoBehaviour
         hotbarSelector.transform.position = hotbarSlots[selectedSlot].transform.position;
         if (previousSelectedSlot != selectedSlot && previousSelectedSlot != -1)
         {
-            items[previousSelectedSlot].GetComponent<Weapon>().Unequip();
-            items[selectedSlot].GetComponent<Weapon>().Equip(root);
-            previousSelectedSlot = selectedSlot;
+            UnequipSlot(previousSelectedSlot);
+            EquipCurrentSlot();
         }
     }
 
@@ -67,6 +60,92 @@ public class HotBar : MonoBehaviour
         else if (scroll > 0f)
         {
             selectedSlot = (selectedSlot - 1 + hotbarSlots.Length) % hotbarSlots.Length;
+        }
+    }
+
+    private void PopulateHotbarWithRandomWeapons()
+    {
+        equippedWeapons = new GameObject[hotbarSlots.Length];
+
+        List<GameObject> availableWeapons = new List<GameObject>();
+        foreach (GameObject item in items)
+        {
+            if (item != null)
+            {
+                availableWeapons.Add(item);
+            }
+        }
+
+        for (int slotIndex = 0; slotIndex < hotbarSlots.Length; slotIndex++)
+        {
+            if (availableWeapons.Count == 0)
+            {
+                hotbarSlots[slotIndex].sprite = null;
+                hotbarSlots[slotIndex].enabled = false;
+                equippedWeapons[slotIndex] = null;
+                continue;
+            }
+
+            int weaponIndex = Random.Range(0, availableWeapons.Count);
+            GameObject weaponObject = availableWeapons[weaponIndex];
+            availableWeapons.RemoveAt(weaponIndex);
+
+            equippedWeapons[slotIndex] = weaponObject;
+            Weapon weapon = weaponObject.GetComponent<Weapon>();
+            hotbarSlots[slotIndex].sprite = weapon != null ? weapon.weaponIcon : null;
+            hotbarSlots[slotIndex].enabled = true;
+        }
+
+        selectedSlot = Mathf.Clamp(selectedSlot, 0, hotbarSlots.Length - 1);
+    }
+
+    private void EquipCurrentSlot()
+    {
+        if (equippedWeapons == null || equippedWeapons.Length == 0)
+        {
+            return;
+        }
+
+        GameObject currentWeapon = equippedWeapons[selectedSlot];
+        if (currentWeapon == null)
+        {
+            previousSelectedSlot = selectedSlot;
+            return;
+        }
+
+        Weapon weapon = currentWeapon.GetComponent<Weapon>();
+        if (weapon == null)
+        {
+            previousSelectedSlot = selectedSlot;
+            return;
+        }
+
+        if (previousSelectedSlot >= 0 && previousSelectedSlot < equippedWeapons.Length)
+        {
+            UnequipSlot(previousSelectedSlot);
+        }
+
+        weapon.Equip(root);
+        previousSelectedSlot = selectedSlot;
+    }
+
+    private void UnequipSlot(int slotIndex)
+    {
+        if (equippedWeapons == null || slotIndex < 0 || slotIndex >= equippedWeapons.Length)
+        {
+            return;
+        }
+
+        GameObject weaponObject = equippedWeapons[slotIndex];
+        if (weaponObject == null)
+        {
+            return;
+        }
+
+        Weapon weapon = weaponObject.GetComponent<Weapon>();
+        if (weapon != null)
+        {
+            weapon.Unequip();
         }
     }
 }
