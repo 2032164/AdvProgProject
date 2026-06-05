@@ -18,12 +18,14 @@ public class FPSController : MonoBehaviour
     public float lookXLimit = 45f;
 
     public float health = 100f;
+    public float invulnerabilitySeconds = 1f;
     public GameObject healthBar;
     public HotBar hotbar;
 
 
         Vector3 moveDirection = Vector3.zero;
     float rotationX = 0;
+    float nextDamageTime = 0f;
 
     public bool canMove = true;
 
@@ -81,16 +83,6 @@ public class FPSController : MonoBehaviour
 
     void OnControllerColliderHit(ControllerColliderHit hit)
     {
-        Enemy enemy = hit.transform.root.GetComponent<Enemy>();
-        if (enemy != null)
-        {
-            //enemy.OnPlayerBumped(gameObject, hit);
-            //enemy.KnockbackFrom(transform, 4f, 0.15f);
-            health -= enemy.damage;
-            return;
-
-        }
-
         
         Rigidbody body = hit.collider.attachedRigidbody;
         if (body == null || body.isKinematic)
@@ -103,7 +95,35 @@ public class FPSController : MonoBehaviour
         body.velocity = pushDir * walkSpeed;
     }
 
+    void OnTriggerEnter(Collider other)
+    {
+        TryTakeDamage(other);
+    }
+
+    void OnTriggerStay(Collider other)
+    {
+        TryTakeDamage(other);
+    }
+
+    void TryTakeDamage(Collider other)
+    {
+        Enemy enemy = other.transform.root.GetComponent<Enemy>();
+        if (enemy != null)
+        {
+            TakeDamage(enemy.damage);
+        }
+    }
+
     public float getHealth(){
         return (float)health;
+    }
+
+    void TakeDamage(float amount)
+    {
+        if (Time.time < nextDamageTime || health <= 0f)
+            return;
+
+        health = Mathf.Max(0f, health - amount);
+        nextDamageTime = Time.time + invulnerabilitySeconds;
     }
 }

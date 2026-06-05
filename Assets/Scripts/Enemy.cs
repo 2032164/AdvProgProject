@@ -61,8 +61,12 @@ public class Enemy : MonoBehaviour
         health -= dmg;
         Debug.Log($"{name} health now {health}");
 
-        if (health <= 0f)
+        if (health <= 0f){
+            playerBody = GameObject.FindWithTag("Player");
+            playerBody.GetComponent<GoldAmount>().AddGold(50);
             Destroy(gameObject);
+        }
+        
     }
 
     public void KnockbackFrom(Transform source, float speed, float time)
