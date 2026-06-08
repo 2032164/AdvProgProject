@@ -1,3 +1,5 @@
+// Tracks player's gold and updates the UI text element.
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;

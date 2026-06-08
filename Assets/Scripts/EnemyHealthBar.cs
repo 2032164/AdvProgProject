@@ -1,3 +1,6 @@
+// World-space enemy health bar: orients to camera and displays fill amount from
+// the associated Enemy's health.
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;

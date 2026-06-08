@@ -1,3 +1,5 @@
+// Room spawner: optional enemy spawn on Start based on spawnChance.
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -19,11 +21,5 @@ public class Room : MonoBehaviour
             enemy.player = player;
             enemy.playerBody = playerBody;
         }
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

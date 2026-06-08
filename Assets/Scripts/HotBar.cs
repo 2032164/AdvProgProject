@@ -1,3 +1,5 @@
+// UI hotbar manager, fills slots, handles selection input, and equips items, manages re-rolling items.
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -22,7 +24,7 @@ public class HotBar : MonoBehaviour
         EquipCurrentSlot();
     }
 
-    // Update is called once per frame
+
     void Update()
     {
         if(Input.GetKeyDown(KeyCode.Alpha1))
@@ -147,5 +149,78 @@ public class HotBar : MonoBehaviour
         {
             weapon.Unequip();
         }
+    }
+
+    // Rerolls the requested slot, replacing the equipped weapon with a new random
+    // one from the available items while excluding weapons already equipped in
+    // other slots and the previous weapon in the same slot.
+    public void RerollSlot(int slotIndex)
+    {
+        if (equippedWeapons == null || equippedWeapons.Length == 0)
+        {
+            return;
+        }
+
+        if (slotIndex < 0 || slotIndex >= equippedWeapons.Length)
+        {
+            return;
+        }
+
+        GameObject currentWeapon = equippedWeapons[slotIndex];
+        if (currentWeapon != null)
+        {
+            Weapon weapon = currentWeapon.GetComponent<Weapon>();
+            if (weapon != null)
+            {
+                weapon.Unequip();
+            }
+        }
+
+        List<GameObject> availableWeapons = new List<GameObject>();
+        foreach (GameObject item in items)
+        {
+            if (item == null || item.GetComponent<Weapon>() == null)
+            {
+                continue;
+            }
+
+            bool alreadyEquippedElsewhere = false;
+            for (int i = 0; i < equippedWeapons.Length; i++)
+            {
+                if (i == slotIndex)
+                {
+                    continue;
+                }
+
+                if (equippedWeapons[i] == item)
+                {
+                    alreadyEquippedElsewhere = true;
+                    break;
+                }
+            }
+
+            if (!alreadyEquippedElsewhere)
+            {
+                availableWeapons.Add(item);
+            }
+        }
+
+        if (availableWeapons.Count == 0)
+        {
+            hotbarSlots[slotIndex].sprite = null;
+            hotbarSlots[slotIndex].enabled = false;
+            equippedWeapons[slotIndex] = null;
+            return;
+        }
+
+        int weaponIndex = Random.Range(0, availableWeapons.Count);
+        GameObject newWeaponObject = availableWeapons[weaponIndex];
+        equippedWeapons[slotIndex] = newWeaponObject;
+
+        Weapon newWeapon = newWeaponObject.GetComponent<Weapon>();
+        hotbarSlots[slotIndex].sprite = newWeapon != null ? newWeapon.weaponIcon : null;
+        hotbarSlots[slotIndex].enabled = true;
+
+        EquipCurrentSlot();
     }
 }

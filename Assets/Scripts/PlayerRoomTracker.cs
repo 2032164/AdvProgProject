@@ -1,3 +1,6 @@
+// Tracks the player's current room and manages nearby room visibility using
+// breadth-first traversal up to renderDepth.
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -22,6 +25,7 @@ public class PlayerRoomTracker : MonoBehaviour
         RefreshRoomVisibility(currentRoom);
     }
 
+    //Used AI to help with the logic of this method, it is a breadth first search that starts at the current room and adds connected rooms to a queue until it reaches the render depth. It then sets all rooms that are not in the queue to inactive.
     private void RefreshRoomVisibility(RoomController centerRoom)
     {
         if (centerRoom == null)
@@ -30,6 +34,9 @@ public class PlayerRoomTracker : MonoBehaviour
         }
 
         HashSet<RoomController> roomsToKeepActive = new HashSet<RoomController>();
+        // Breadth-first search from the player's current room to determine which
+        // rooms should remain active (rendered). `roomsToKeepActive` prevents
+        // revisiting rooms and limits traversal to `renderDepth`.
         Queue<(RoomController room, int depth)> roomsToVisit = new Queue<(RoomController room, int depth)>();
 
         roomsToVisit.Enqueue((centerRoom, 0));

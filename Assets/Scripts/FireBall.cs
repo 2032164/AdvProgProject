@@ -1,3 +1,5 @@
+// Projectile for fireball spells: lifetime, movement, and collision handling.
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;

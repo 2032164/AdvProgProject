@@ -1,3 +1,5 @@
+// Staff component: holds a rolled Spell and casts it from `spellGen` when used.
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;

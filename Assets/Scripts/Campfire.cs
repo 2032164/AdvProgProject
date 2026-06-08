@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Security;
 using UnityEngine;
 public class AreaDetection : MonoBehaviour
 {
@@ -23,7 +24,10 @@ public class AreaDetection : MonoBehaviour
                 healthBar.SetCampfireHealing(true); // Start faster healing
                 UnityEngine.Debug.Log("Player is now healing faster.");
             }
-            // Insert logic here (e.g., start a cutscene, spawn enemies, or play music)
+            if (fpsController != null)
+            {
+                fpsController.enterUpgradeMenu();
+            }
         }
     }
 

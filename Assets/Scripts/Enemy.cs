@@ -1,3 +1,5 @@
+// Enemy controller: chases the player, handles health and knockback.
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
@@ -62,8 +64,9 @@ public class Enemy : MonoBehaviour
         Debug.Log($"{name} health now {health}");
 
         if (health <= 0f){
-            playerBody = GameObject.FindWithTag("Player");
-            playerBody.GetComponent<GoldAmount>().AddGold(50);
+            GoldAmount goldAmount = FindAnyObjectByType<GoldAmount>();
+            UnityEngine.Debug.Log("Enemy killed, adding gold to player");
+            goldAmount.AddGold(50);
             Destroy(gameObject);
         }
         
@@ -71,6 +74,8 @@ public class Enemy : MonoBehaviour
 
     public void KnockbackFrom(Transform source, float speed, float time)
     {
+        // Start a short-lived coroutine to push the enemy away from a damage source
+        // and grant temporary invulnerability while the knockback plays.
         StartCoroutine(KnockbackRoutine(source, speed, time));
     }
 

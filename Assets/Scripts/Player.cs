@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 [RequireComponent(typeof(CharacterController))]
 public class FPSController : MonoBehaviour
@@ -22,8 +24,8 @@ public class FPSController : MonoBehaviour
     public GameObject healthBar;
     public HotBar hotbar;
 
-
-        Vector3 moveDirection = Vector3.zero;
+    public Canvas upgradeMenu;
+    Vector3 moveDirection = Vector3.zero;
     float rotationX = 0;
     float nextDamageTime = 0f;
 
@@ -120,10 +122,25 @@ public class FPSController : MonoBehaviour
 
     void TakeDamage(float amount)
     {
-        if (Time.time < nextDamageTime || health <= 0f)
+        UnityEngine.Debug.Log("Player taking damage: " + amount + " current health: " + health);
+        if ((health-amount) <=0f)
+        {
+            UnityEngine.Debug.Log("Died: " + (health-amount));
+            Cursor.lockState = CursorLockMode.Confined;
+            Cursor.visible = true;
+            SceneManager.LoadScene("Death");
+        }
+        if (Time.time < nextDamageTime || health <= 0f){
             return;
+        }
 
         health = Mathf.Max(0f, health - amount);
         nextDamageTime = Time.time + invulnerabilitySeconds;
+    }
+
+    public void enterUpgradeMenu()
+    {
+        canMove = false;
+        upgradeMenu.gameObject.SetActive(true);
     }
 }

@@ -1,3 +1,5 @@
+// Melee weapon behaviour, applies damage and physics pushes and manages equip state.
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;

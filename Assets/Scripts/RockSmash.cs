@@ -1,3 +1,5 @@
+// Projectile for rock smash spells: movement, lifetime, and collision logic.
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;

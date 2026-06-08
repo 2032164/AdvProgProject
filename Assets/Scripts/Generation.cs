@@ -1,3 +1,7 @@
+
+// Procedural dungeon/room generator. Makes a series of rooms based on prefabs
+// and manages branching, room connectivity, and decor placement.
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Numerics;
@@ -9,8 +13,6 @@ using System.Runtime.InteropServices;
 
 public class Generation : MonoBehaviour
 {
-    // Start is called before the first frame update
-    //offset is 10?
     public GameObject[] rooms;//1= start, 2= straight, 3= left turn, 4 = right turn, 5 = branch, 6 = end
     public GameObject[] decor;
     public int campfireDecorIndex = 3;
@@ -38,8 +40,11 @@ public class Generation : MonoBehaviour
 
 
 
-///FOR SOME REASON, Three right turn keep happening and they cause it to double back on its self
- 
+    //This constructs rooms sequentially and handles
+    // branching. The generator records placed positions in pastPositions for checking placement and
+    // uses roomMap to track instantiated RoomController objects for connectivity
+    // The main loop attempts to place numRooms rooms, when it detects a dead-end, where no rooms can be placed
+    // it breaks early and places the end room to avoid infinite retries when stuck
     void Start(){
         ArrayList decorPositions = new ArrayList();
         bool branching = false;
@@ -61,6 +66,12 @@ public class Generation : MonoBehaviour
         direction = "posx";
         currentPos.x+=10;
         for(int i = 1; i < numRooms-2; i++){
+            if (!HasAnyValidPlacement(direction, branching, i))
+            {
+                Debug.LogWarning("Generation reached a dead-end. Placing end room early.");
+                break;
+            }
+
             int rand;
             // record positions only after a room is actually instantiated (see below)
             if(maxNumBranches > 0 && !branching){
@@ -73,13 +84,12 @@ public class Generation : MonoBehaviour
             if (branching)
             {
                 branchesLeft--;
-                //Debug.Log("branching, branches left: " + branchesLeft + " current pos: " + currentPos + "direction: " + direction);
             }
             if(branching && branchesLeft == 0)
             {
                 //Debug.Log("Done with branch, returning to main path. Current pos: " + currentPos + " branch pos: " + branchPos + " branch dir: " + branchDir + " direction: " + direction);
                 branching = false;
-                GameObject roomObj = Instantiate(rooms[4], currentPos, Quaternion.Euler(0, rotation, 0),root);
+                GameObject roomObj = Instantiate(rooms[5], currentPos, Quaternion.Euler(0, rotation, 0),root);
                 RoomController rc = roomObj.GetComponent<RoomController>();
                 if (rc != null)
                 {
@@ -92,11 +102,11 @@ public class Generation : MonoBehaviour
                 currentPos = branchPos;
                 rotation = branchRotation;
                 waitingForBranchSecondStart = true;
-                //can't do this bc it overwrites an position in past positions, need to find a way to not overwrite positions in past positions when branching
+                // After finishing a branch, return to the previously saved main location.
             }
             
 
-            if (rand == 1){//straight
+            if (rand == 1){//straight hall
                 if(checkNextPos(currentPos, direction))
                 {
                     GameObject roomObj = Instantiate(temp, currentPos, Quaternion.Euler(0, rotation, 0),root);
@@ -119,6 +129,8 @@ public class Generation : MonoBehaviour
                     currentPos = newPos(currentPos, direction);
                 }
                 else{
+                    // Placement failed because the target position is occupied or would be blocked off.
+                    // Reset the loop counter to retry this step with a different room choice.
                     i--;
                 }
             }
@@ -147,7 +159,7 @@ public class Generation : MonoBehaviour
                     currentPos = newPos(currentPos, direction);
                 }
                 else{
-                    //Debug.Log("trying left turn - position already occupied" + currentPos + direction);
+                    // Left-turn would collide, retries
                     i--;
                 }
             }
@@ -175,7 +187,7 @@ public class Generation : MonoBehaviour
                     currentPos = newPos(currentPos, direction);
                 }
                 else{
-                    //Debug.Log("trying right turn - position already occupied" + currentPos + direction);
+                    // Right-turn would collide, retries
                     i--; 
                 }
             }
@@ -205,38 +217,39 @@ public class Generation : MonoBehaviour
                     direction = d1;
                 }
                 else{
+                    // Branch placement was invalid, retries
                     i--;
                 }
             }
 
-            //start of random decor elements
+            //start of random decor elements placement, 50% chance
             if((Random.Range(0f,1f) < .5f)){
                 decorPositions.Add(currentPos);
             }
         }
 
-        GameObject endRoom = Instantiate(rooms[5], currentPos, Quaternion.Euler(0, rotation, 0),root);//makes end room
+        GameObject endRoom = Instantiate(rooms[5], currentPos, Quaternion.Euler(0, rotation, 0),root);//Makes end room at end of path
         RoomController endRC = endRoom.GetComponent<RoomController>();
         if (endRC != null)
         {
             roomMap[currentPos] = endRC;
             ConnectRooms(lastPlacedPos, currentPos);
-            // The final end room should terminate the path, not reconnect back to a branch junction.
+            // The final end room should terminate the path
             waitingForBranchSecondStart = false;
         }
         pastPositions.Add(currentPos);
-        GameObject chest = decor[decor.Length-1];
-        Instantiate(chest, addRandomOffset(currentPos), Quaternion.Euler(0, rotation, 0), endRoom.transform);
-        
+
         surface.BuildNavMesh();//If you move this behind decor gen, the enemies will avoid the decor unless moved by player 
 
+        //generates decor elements at the positions recorded in decorPositions, with random rotation and offset for variety.
+        //uses GetRandomDecorPrefab to select decor, which handles campfire placement limits.
         foreach(Vector3 decorPos in decorPositions){
             GameObject decorTemp = GetRandomDecorPrefab();
             Transform roomParent = GetRoomTransformAtPosition(decorPos);
             Instantiate(decorTemp, addRandomOffset(decorPos), randomRotation(),roomParent);
         }
 
-        // Disable all rooms initially (culling)
+        // Disable all rooms initially to help preformace, they are enabled as the player generates
         foreach (var room in roomMap.Values)
         {
             if (room != null)
@@ -246,6 +259,8 @@ public class Generation : MonoBehaviour
         }
     }
 
+    //connects two rooms in the roomMap by adding each other to their connectedRooms list.
+    //For use in culling extra objects
     private void ConnectRooms(Vector3 fromPos, Vector3 toPos)
     {
         if (!roomMap.TryGetValue(fromPos, out RoomController fromRoom) || fromRoom == null)
@@ -269,6 +284,7 @@ public class Generation : MonoBehaviour
         }
     }
 
+    //gets random decor prefab, with logic to limit campfire spawns
     private GameObject GetRandomDecorPrefab()
     {
         if (decor == null || decor.Length == 0)
@@ -300,7 +316,7 @@ public class Generation : MonoBehaviour
     }
 
      private Vector3 newPos(Vector3 currentPos, string direction)
-     //finds the next position based on the current position and direction, adds 10 to the appropriate axis
+     //finds the next position based on the current position and direction, adds 10 to the appropriate axis so pos is updates
     {
         if (direction == "posx")
         {
@@ -319,11 +335,11 @@ public class Generation : MonoBehaviour
             return new Vector3(currentPos.x, currentPos.y, currentPos.z - 10);
         }
     }
-
+    //finds the next position and checks if it has a room already, if it does then it returns false
     private bool checkNextPos(Vector3 pos, string direction)
     {
         pos = newPos(pos, direction);
-        //finds the next position and checks if it has a room already, if it does then it returns false
+        
         for (int i = 0; i < pastPositions.Count; i++)
         {
             if (pastPositions[i] == pos)
@@ -332,6 +348,35 @@ public class Generation : MonoBehaviour
             }
         }
         return true;
+    }
+
+    //checks if a room can be placed at all, if one can't, then the generator is stuck and needs to end
+    private bool HasAnyValidPlacement(string currentDirection, bool branching, int roomIndex)
+    {
+        if (checkNextPos(currentPos, currentDirection))
+        {
+            return true;
+        }
+
+        string leftDir = leftTurn(currentDirection);
+        if (checkNextPos(currentPos, leftDir))
+        {
+            return true;
+        }
+
+        string rightDir = rightTurn(currentDirection);
+        if (checkNextPos(currentPos, rightDir))
+        {
+            return true;
+        }
+
+        bool canStartBranch = !branching && maxNumBranches > 0 && roomIndex < numRooms - 3;
+        if (canStartBranch && checkNextPos(currentPos, leftDir) && checkNextPos(currentPos, rightDir))
+        {
+            return true;
+        }
+
+        return false;
     }
 
     private string rightTurn(string direction)
@@ -358,7 +403,7 @@ public class Generation : MonoBehaviour
         };
     }
 
-    private int numBranchesLeft(int i)//SMTING ABOOUT WHEN I MINUS WHEN WHEN IT CAN"T GENERATE??????????
+    private int numBranchesLeft(int i)
     {
         if((numRooms - i)%2 == 0)
         {
@@ -369,7 +414,7 @@ public class Generation : MonoBehaviour
             return ((numRooms - i) / 2) - 1;
         }
     }
-
+    //adds a random offset to a position for decor placement 
     private Vector3 addRandomOffset(Vector3 pos)
     {
         float xOffset = randomOutsideCenter(-3f, 3f, -1f, 1f);
@@ -378,6 +423,7 @@ public class Generation : MonoBehaviour
         return new Vector3(pos.x + xOffset, pos.y, pos.z + zOffset);
     }
 
+// Utility method to get the RoomController at a given position from the roomMap, returns null if not found.
     private Transform GetRoomTransformAtPosition(Vector3 pos)
     {
         if (roomMap.TryGetValue(pos, out RoomController roomController) && roomController != null)
@@ -388,6 +434,7 @@ public class Generation : MonoBehaviour
         return null;
     }
 
+    //random generator between min and max excluding blockedMin-BlockedMax for decor placing
     private float randomOutsideCenter(float min, float max, float blockedMin, float blockedMax)
     {
         float leftSize = blockedMin - min;

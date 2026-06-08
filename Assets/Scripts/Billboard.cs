@@ -1,3 +1,5 @@
+// Makes a UI or sprite object face the main camera (billboard effect).
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -15,9 +17,9 @@ public class Billboard : MonoBehaviour
     void Update()
     {
         transform.LookAt(mainCamera.transform);
-        transform.Rotate(0,90,90);//(clockwise),(idk,left-right?),(fallback-facing up to the player)x,y,z
+        transform.Rotate(90,0,0);
         Vector3 euler = transform.eulerAngles;
-        euler.z = 90;
+        //euler.z = 90;
         transform.eulerAngles = euler;
 
     }

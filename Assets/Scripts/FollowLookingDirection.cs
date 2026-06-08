@@ -1,3 +1,6 @@
+// Smoothly orients an object to follow the player's camera within configured
+// angular constraints, used for players items like the weapons.
+
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;

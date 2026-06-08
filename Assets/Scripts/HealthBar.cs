@@ -1,3 +1,5 @@
+// Player health manager, handles passive healing and campfire-boosted healing.
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;

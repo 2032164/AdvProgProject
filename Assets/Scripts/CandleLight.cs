@@ -1,3 +1,5 @@
+// Simulates candle light flicker using Perlin noise and random color offsets.
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Security.Claims;

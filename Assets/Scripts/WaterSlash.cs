@@ -1,3 +1,5 @@
+// Projectile for water spells: lifetime, movement, rotation, and collisions.
+
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;

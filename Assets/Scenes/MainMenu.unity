@@ -6457,7 +6457,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Hriday
+  m_text: Randungeon
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: a59b36244400fee43929d40419138689, type: 2}
   m_sharedMaterial: {fileID: -3047300953893181973, guid: a59b36244400fee43929d40419138689, type: 2}

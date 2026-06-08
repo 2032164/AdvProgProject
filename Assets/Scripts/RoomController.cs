@@ -1,11 +1,11 @@
+// Groups room renderers and tracks connectivity for culling and visibility.
+
 using System.Collections.Generic;
 using UnityEngine;
 
 public class RoomController : MonoBehaviour
 {
     public static readonly List<RoomController> AllRooms = new List<RoomController>();
-
-    // Assign connected rooms in the gen code
     public List<RoomController> connectedRooms;
 
     private void Awake()
@@ -25,6 +25,8 @@ public class RoomController : MonoBehaviour
         AllRooms.Remove(this);
     }
 
+    // Enable or disable all renderers in this room. Used by the culling system
+    // to turn rooms on or off based on player's current room pos
     public void SetRoomActive(bool active)
     {
         Renderer[] renderers = GetComponentsInChildren<Renderer>(true);
@@ -35,4 +37,5 @@ public class RoomController : MonoBehaviour
             }
         }
     }
+
 }
